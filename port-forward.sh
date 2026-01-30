@@ -1,4 +1,4 @@
-#!/bin/bash
+##!/bin/bash
 # Port Forward Script for ArgoCD, Prometheus, and Grafana
 # Runs in background and auto-reconnects
 
