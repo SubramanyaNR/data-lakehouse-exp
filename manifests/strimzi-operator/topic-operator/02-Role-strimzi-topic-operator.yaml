@@ -26,8 +26,9 @@ rules:
   - patch
   - update
 - apiGroups:
-  - ""
+    # Needed for environments with enabled OwnerReferencesPermissionEnforcement admission controller (e.g. OpenShift)
+    - "kafka.strimzi.io"
   resources:
-  - events
+    - kafkatopics/finalizers
   verbs:
-  - create
+    - update

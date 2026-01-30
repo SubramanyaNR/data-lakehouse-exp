@@ -64,8 +64,6 @@ rules:
     resources:
       # The cluster operator needs to access and manage deployments to run deployment based Strimzi components
       - deployments
-      # The cluster operator needs to access and manage stateful sets to run stateful sets based Strimzi components
-      - statefulsets
       # The cluster operator needs to access replica-sets to manage Strimzi components and to determine error states
       - replicasets
     verbs:
@@ -86,10 +84,9 @@ rules:
       - patch
       - update
   - apiGroups:
-      - "" # legacy core events api, used by topic operator
       - "events.k8s.io" # new events api, used by cluster operator
     resources:
-      # The cluster operator needs to be able to create events and delegate permissions to do so
+      # The cluster operator needs to be able to create events
       - events
     verbs:
       - create
