@@ -38,7 +38,7 @@ while true; do
     kubectl port-forward svc/argocd-server -n argocd $ARGOCD_PORT:443 --address 0.0.0.0 2>/dev/null &
     kubectl port-forward svc/kube-prometheus-stack-grafana -n monitoring $GRAFANA_PORT:80 --address 0.0.0.0 2>/dev/null &
     kubectl port-forward svc/kube-prometheus-stack-prometheus -n monitoring $PROMETHEUS_PORT:9090 --address 0.0.0.0 2>/dev/null &
-    
+    kubectl port-forward svc/my-cluster-kafka-bootstrap -n kafka 9092:9092    
     sleep 30
     
     # Check and restart if any died
@@ -46,3 +46,5 @@ while true; do
     pgrep -f "port-forward.*grafana" > /dev/null || echo "[Grafana] Reconnecting..."
     pgrep -f "port-forward.*prometheus" > /dev/null || echo "[Prometheus] Reconnecting..."
 done
+
+kubectl port-forward svc/postgresql -n postgres 5432:5432

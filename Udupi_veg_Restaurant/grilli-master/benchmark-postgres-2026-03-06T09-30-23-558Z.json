@@ -1,0 +1,1616 @@
+{
+  "metadata": {
+    "name": "Restaurant App - PostgreSQL Benchmark",
+    "version": "3.0.0",
+    "adapter": "postgres",
+    "timestamp": "2026-03-06T09:30:23.558Z",
+    "endTime": "2026-03-06T10:45:23.921Z",
+    "duration": "75 minutes"
+  },
+  "systemInfo": {
+    "collectedAt": "2026-03-06T09:30:25.172Z",
+    "host": {
+      "hostname": "ubuntu-Virtual-Machine",
+      "platform": "linux",
+      "arch": "x64",
+      "uptime": "153h"
+    },
+    "cpu": {
+      "model": "Intel(R) Core(TM) i5-8350U CPU @ 1.70GHz",
+      "speed": "0 MHz",
+      "cores": {
+        "physical": 2,
+        "logical": 4
+      },
+      "loadAverage": "0.77 / 1.86 / 2.55"
+    },
+    "memory": {
+      "total": "5.72 GB",
+      "free": "1.57 GB",
+      "usage": "72.5%"
+    },
+    "disk": {
+      "size": "78G",
+      "available": "53G",
+      "usage": "29%",
+      "type": "HDD"
+    },
+    "os": {
+      "type": "Linux",
+      "platform": "linux",
+      "release": "5.15.0-139-generic",
+      "name": "Ubuntu",
+      "version": "20.04.6 LTS (Focal Fossa)",
+      "kernel": "5.15.0-139-generic"
+    },
+    "runtime": {
+      "node": "v20.20.0",
+      "npm": "10.8.2"
+    },
+    "kubernetes": {
+      "available": true,
+      "serverVersion": "v1.32.8"
+    },
+    "database": {
+      "type": "PostgreSQL",
+      "available": true,
+      "version": "PostgreSQL 18.1 on x86_64-pc-linux-gnu",
+      "maxConnections": "100"
+    }
+  },
+  "configuration": {
+    "poolSizesTested": [
+      10,
+      25,
+      50
+    ],
+    "loadLevelsTested": [
+      10,
+      25,
+      50,
+      100,
+      200,
+      300
+    ],
+    "runs": 3,
+    "warmupDuration": 20,
+    "testDuration": 60,
+    "cooldownDuration": 10,
+    "thresholds": {
+      "maxErrorRate": 0.05,
+      "maxP95Latency": 1000,
+      "maxP99Latency": 2000
+    }
+  },
+  "results": {
+    "10": {
+      "poolSize": 10,
+      "loadLevels": {
+        "10": {
+          "targetRps": 10,
+          "poolSize": 10,
+          "actualRps": {
+            "mean": 9.97,
+            "margin": 0
+          },
+          "errorRate": {
+            "mean": 0,
+            "margin": 0
+          },
+          "latency": {
+            "p50": {
+              "mean": 10.44,
+              "margin": 0.13
+            },
+            "p95": {
+              "mean": 32.09,
+              "margin": 12.09
+            },
+            "p99": {
+              "mean": 81.15,
+              "margin": 33.96
+            }
+          },
+          "totals": {
+            "requests": 1794,
+            "success": 1794,
+            "failed": 0
+          },
+          "errors": {},
+          "meetsThresholds": true,
+          "rawIterations": [
+            {
+              "targetRps": 10,
+              "actualRps": 9.97,
+              "requests": {
+                "total": 598,
+                "success": 598,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 598,
+                "min": 7.04,
+                "max": 96.29,
+                "mean": 12.57,
+                "stdDev": 8.5,
+                "p50": 10.56,
+                "p90": 13.95,
+                "p95": 26.24,
+                "p99": 55.78
+              }
+            },
+            {
+              "targetRps": 10,
+              "actualRps": 9.97,
+              "requests": {
+                "total": 598,
+                "success": 598,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 598,
+                "min": 6.81,
+                "max": 162.5,
+                "mean": 12.97,
+                "stdDev": 10.77,
+                "p50": 10.43,
+                "p90": 17.44,
+                "p95": 25.61,
+                "p99": 73.4
+              }
+            },
+            {
+              "targetRps": 10,
+              "actualRps": 9.97,
+              "requests": {
+                "total": 598,
+                "success": 598,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 598,
+                "min": 7.77,
+                "max": 514.23,
+                "mean": 16.24,
+                "stdDev": 29.14,
+                "p50": 10.33,
+                "p90": 18.26,
+                "p95": 44.42,
+                "p99": 114.28
+              }
+            }
+          ]
+        },
+        "25": {
+          "targetRps": 25,
+          "poolSize": 10,
+          "actualRps": {
+            "mean": 24.63,
+            "margin": 0.09
+          },
+          "errorRate": {
+            "mean": 0,
+            "margin": 0
+          },
+          "latency": {
+            "p50": {
+              "mean": 20.94,
+              "margin": 18.09
+            },
+            "p95": {
+              "mean": 326.68,
+              "margin": 231.92
+            },
+            "p99": {
+              "mean": 693.63,
+              "margin": 246.19
+            }
+          },
+          "totals": {
+            "requests": 4463,
+            "success": 4463,
+            "failed": 0
+          },
+          "errors": {},
+          "meetsThresholds": true,
+          "rawIterations": [
+            {
+              "targetRps": 25,
+              "actualRps": 24.61,
+              "requests": {
+                "total": 1491,
+                "success": 1491,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 1491,
+                "min": 7.66,
+                "max": 1129.66,
+                "mean": 28.96,
+                "stdDev": 81.8,
+                "p50": 11.22,
+                "p90": 41.44,
+                "p95": 93.24,
+                "p99": 545.62
+              }
+            },
+            {
+              "targetRps": 25,
+              "actualRps": 24.56,
+              "requests": {
+                "total": 1489,
+                "success": 1489,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 1489,
+                "min": 8.1,
+                "max": 1658.66,
+                "mean": 74.97,
+                "stdDev": 191.38,
+                "p50": 12.21,
+                "p90": 193.24,
+                "p95": 477.02,
+                "p99": 943.42
+              }
+            },
+            {
+              "targetRps": 25,
+              "actualRps": 24.71,
+              "requests": {
+                "total": 1483,
+                "success": 1483,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 1483,
+                "min": 11.65,
+                "max": 970.01,
+                "mean": 109.04,
+                "stdDev": 135.62,
+                "p50": 39.39,
+                "p90": 317.06,
+                "p95": 409.79,
+                "p99": 591.86
+              }
+            }
+          ]
+        },
+        "50": {
+          "targetRps": 50,
+          "poolSize": 10,
+          "actualRps": {
+            "mean": 45.12,
+            "margin": 6.01
+          },
+          "errorRate": {
+            "mean": 4.34,
+            "margin": 8.51
+          },
+          "latency": {
+            "p50": {
+              "mean": 4580.5,
+              "margin": 7649.69
+            },
+            "p95": {
+              "mean": 7708.56,
+              "margin": 7558.52
+            },
+            "p99": {
+              "mean": 8146.29,
+              "margin": 7447.02
+            }
+          },
+          "totals": {
+            "requests": 8753,
+            "success": 8383,
+            "failed": 370
+          },
+          "errors": {
+            "HTTP_500": 370
+          },
+          "meetsThresholds": false,
+          "rawIterations": [
+            {
+              "targetRps": 50,
+              "actualRps": 49.32,
+              "requests": {
+                "total": 2962,
+                "success": 2962,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 2962,
+                "min": 10.32,
+                "max": 4015.2,
+                "mean": 782,
+                "stdDev": 1043.32,
+                "p50": 244.57,
+                "p90": 2563.4,
+                "p95": 3139.75,
+                "p99": 3836.88
+              }
+            },
+            {
+              "targetRps": 50,
+              "actualRps": 46.88,
+              "requests": {
+                "total": 2949,
+                "success": 2949,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 2949,
+                "min": 13.68,
+                "max": 5079.43,
+                "mean": 1630.07,
+                "stdDev": 1523.87,
+                "p50": 1127.28,
+                "p90": 4249.44,
+                "p95": 4611.54,
+                "p99": 4880.64
+              }
+            },
+            {
+              "targetRps": 50,
+              "actualRps": 39.15,
+              "requests": {
+                "total": 2842,
+                "success": 2472,
+                "failed": 370
+              },
+              "errorRate": 13.02,
+              "errors": {
+                "HTTP_500": 370
+              },
+              "latency": {
+                "count": 2842,
+                "min": 16.77,
+                "max": 16239.12,
+                "mean": 8108.45,
+                "stdDev": 6814.02,
+                "p50": 12369.65,
+                "p90": 15251.11,
+                "p95": 15374.38,
+                "p99": 15721.36
+              }
+            }
+          ]
+        },
+        "100": {
+          "targetRps": 100,
+          "poolSize": 10,
+          "actualRps": {
+            "mean": 76.11,
+            "margin": 2.21
+          },
+          "errorRate": {
+            "mean": 27.2,
+            "margin": 9.78
+          },
+          "latency": {
+            "p50": {
+              "mean": 15004.37,
+              "margin": 3.16
+            },
+            "p95": {
+              "mean": 15282.85,
+              "margin": 79.96
+            },
+            "p99": {
+              "mean": 15439.26,
+              "margin": 98.5
+            }
+          },
+          "totals": {
+            "requests": 17152,
+            "success": 12512,
+            "failed": 4640
+          },
+          "errors": {
+            "HTTP_500": 1145
+          },
+          "meetsThresholds": false,
+          "rawIterations": [
+            {
+              "targetRps": 100,
+              "actualRps": 73.86,
+              "requests": {
+                "total": 5545,
+                "success": 3513,
+                "failed": 2032
+              },
+              "errorRate": 36.65,
+              "errors": {
+                "HTTP_500": 2032
+              },
+              "latency": {
+                "count": 5545,
+                "min": 59.32,
+                "max": 15944.45,
+                "mean": 13327.76,
+                "stdDev": 3908.28,
+                "p50": 15007.59,
+                "p90": 15244.34,
+                "p95": 15355.03,
+                "p99": 15538.72
+              }
+            },
+            {
+              "targetRps": 100,
+              "actualRps": 77.23,
+              "requests": {
+                "total": 5799,
+                "success": 4336,
+                "failed": 1463
+              },
+              "errorRate": 25.23,
+              "errors": {
+                "HTTP_500": 1463
+              },
+              "latency": {
+                "count": 5799,
+                "min": 40.65,
+                "max": 15616.93,
+                "mean": 12037.5,
+                "stdDev": 5040.34,
+                "p50": 15002.69,
+                "p90": 15183.31,
+                "p95": 15279.7,
+                "p99": 15402.09
+              }
+            },
+            {
+              "targetRps": 100,
+              "actualRps": 77.25,
+              "requests": {
+                "total": 5808,
+                "success": 4663,
+                "failed": 1145
+              },
+              "errorRate": 19.71,
+              "errors": {
+                "HTTP_500": 1145
+              },
+              "latency": {
+                "count": 5808,
+                "min": 114.45,
+                "max": 15640.91,
+                "mean": 12357.94,
+                "stdDev": 4862.15,
+                "p50": 15002.82,
+                "p90": 15156.38,
+                "p95": 15213.81,
+                "p99": 15376.97
+              }
+            }
+          ]
+        },
+        "200": {
+          "targetRps": 200,
+          "poolSize": 10,
+          "actualRps": {
+            "mean": 116.33,
+            "margin": 38.61
+          },
+          "errorRate": {
+            "mean": 58.5,
+            "margin": 25.23
+          },
+          "latency": {
+            "p50": {
+              "mean": 15014.78,
+              "margin": 17.92
+            },
+            "p95": {
+              "mean": 15320.92,
+              "margin": 177.29
+            },
+            "p99": {
+              "mean": 15893.86,
+              "margin": 620.72
+            }
+          },
+          "totals": {
+            "requests": 27021,
+            "success": 12172,
+            "failed": 14849
+          },
+          "errors": {
+            "HTTP_500": 3792
+          },
+          "meetsThresholds": false,
+          "rawIterations": [
+            {
+              "targetRps": 200,
+              "actualRps": 81.54,
+              "requests": {
+                "total": 6889,
+                "success": 1601,
+                "failed": 5288
+              },
+              "errorRate": 76.76,
+              "errors": {
+                "HTTP_500": 5288
+              },
+              "latency": {
+                "count": 6889,
+                "min": 100.82,
+                "max": 18492.27,
+                "mean": 14014.91,
+                "stdDev": 3142.76,
+                "p50": 15009.22,
+                "p90": 15246.07,
+                "p95": 15359.41,
+                "p99": 16385.39
+              }
+            },
+            {
+              "targetRps": 200,
+              "actualRps": 117.71,
+              "requests": {
+                "total": 8863,
+                "success": 3094,
+                "failed": 5769
+              },
+              "errorRate": 65.09,
+              "errors": {
+                "HTTP_500": 5769
+              },
+              "latency": {
+                "count": 8863,
+                "min": 229.36,
+                "max": 16839.94,
+                "mean": 14643.35,
+                "stdDev": 2035.98,
+                "p50": 15032.65,
+                "p90": 15327.98,
+                "p95": 15454.75,
+                "p99": 15994.04
+              }
+            },
+            {
+              "targetRps": 200,
+              "actualRps": 149.73,
+              "requests": {
+                "total": 11269,
+                "success": 7477,
+                "failed": 3792
+              },
+              "errorRate": 33.65,
+              "errors": {
+                "HTTP_500": 3792
+              },
+              "latency": {
+                "count": 11269,
+                "min": 14.86,
+                "max": 15862.39,
+                "mean": 12172.14,
+                "stdDev": 4880.84,
+                "p50": 15002.47,
+                "p90": 15093.55,
+                "p95": 15148.59,
+                "p99": 15302.14
+              }
+            }
+          ]
+        }
+      },
+      "maxSustainableRps": 25,
+      "breakingPoint": {
+        "rps": 50,
+        "errorRate": 4.34,
+        "p95": 7708.56
+      }
+    },
+    "25": {
+      "poolSize": 25,
+      "loadLevels": {
+        "10": {
+          "targetRps": 10,
+          "poolSize": 25,
+          "actualRps": {
+            "mean": 9.98,
+            "margin": 0.01
+          },
+          "errorRate": {
+            "mean": 0,
+            "margin": 0
+          },
+          "latency": {
+            "p50": {
+              "mean": 10.73,
+              "margin": 2.27
+            },
+            "p95": {
+              "mean": 27.35,
+              "margin": 20
+            },
+            "p99": {
+              "mean": 78.15,
+              "margin": 33.33
+            }
+          },
+          "totals": {
+            "requests": 1796,
+            "success": 1796,
+            "failed": 0
+          },
+          "errors": {},
+          "meetsThresholds": true,
+          "rawIterations": [
+            {
+              "targetRps": 10,
+              "actualRps": 9.97,
+              "requests": {
+                "total": 598,
+                "success": 598,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 598,
+                "min": 7.62,
+                "max": 249.39,
+                "mean": 21.02,
+                "stdDev": 21.34,
+                "p50": 13.04,
+                "p90": 34.56,
+                "p95": 47.73,
+                "p99": 111.97
+              }
+            },
+            {
+              "targetRps": 10,
+              "actualRps": 9.98,
+              "requests": {
+                "total": 599,
+                "success": 599,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 599,
+                "min": 7.4,
+                "max": 98.09,
+                "mean": 11.25,
+                "stdDev": 8.05,
+                "p50": 9.7,
+                "p90": 11.65,
+                "p95": 18.12,
+                "p99": 64.39
+              }
+            },
+            {
+              "targetRps": 10,
+              "actualRps": 9.98,
+              "requests": {
+                "total": 599,
+                "success": 599,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 599,
+                "min": 7.32,
+                "max": 96.6,
+                "mean": 10.73,
+                "stdDev": 7.47,
+                "p50": 9.45,
+                "p90": 11.35,
+                "p95": 16.2,
+                "p99": 58.1
+              }
+            }
+          ]
+        },
+        "25": {
+          "targetRps": 25,
+          "poolSize": 25,
+          "actualRps": {
+            "mean": 24.83,
+            "margin": 0.08
+          },
+          "errorRate": {
+            "mean": 0,
+            "margin": 0
+          },
+          "latency": {
+            "p50": {
+              "mean": 14.62,
+              "margin": 7.18
+            },
+            "p95": {
+              "mean": 223.43,
+              "margin": 218.63
+            },
+            "p99": {
+              "mean": 789.95,
+              "margin": 1040.01
+            }
+          },
+          "totals": {
+            "requests": 4476,
+            "success": 4476,
+            "failed": 0
+          },
+          "errors": {},
+          "meetsThresholds": true,
+          "rawIterations": [
+            {
+              "targetRps": 25,
+              "actualRps": 24.75,
+              "requests": {
+                "total": 1490,
+                "success": 1490,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 1490,
+                "min": 7.29,
+                "max": 3229.09,
+                "mean": 82.11,
+                "stdDev": 315.4,
+                "p50": 9.64,
+                "p90": 81.27,
+                "p95": 442.34,
+                "p99": 1851.05
+              }
+            },
+            {
+              "targetRps": 25,
+              "actualRps": 24.86,
+              "requests": {
+                "total": 1493,
+                "success": 1493,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 1493,
+                "min": 7.32,
+                "max": 844.34,
+                "mean": 24.32,
+                "stdDev": 50.7,
+                "p50": 12.46,
+                "p90": 34.43,
+                "p95": 76.74,
+                "p99": 274.26
+              }
+            },
+            {
+              "targetRps": 25,
+              "actualRps": 24.88,
+              "requests": {
+                "total": 1493,
+                "success": 1493,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 1493,
+                "min": 7.56,
+                "max": 355.15,
+                "mean": 37.78,
+                "stdDev": 48.61,
+                "p50": 21.76,
+                "p90": 94.06,
+                "p95": 151.21,
+                "p99": 244.55
+              }
+            }
+          ]
+        },
+        "50": {
+          "targetRps": 50,
+          "poolSize": 25,
+          "actualRps": {
+            "mean": 49.15,
+            "margin": 0.44
+          },
+          "errorRate": {
+            "mean": 0,
+            "margin": 0
+          },
+          "latency": {
+            "p50": {
+              "mean": 40.04,
+              "margin": 3.55
+            },
+            "p95": {
+              "mean": 461.71,
+              "margin": 227.76
+            },
+            "p99": {
+              "mean": 715.25,
+              "margin": 319.68
+            }
+          },
+          "totals": {
+            "requests": 8891,
+            "success": 8891,
+            "failed": 0
+          },
+          "errors": {},
+          "meetsThresholds": true,
+          "rawIterations": [
+            {
+              "targetRps": 50,
+              "actualRps": 48.7,
+              "requests": {
+                "total": 2956,
+                "success": 2956,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 2956,
+                "min": 8.64,
+                "max": 1373.46,
+                "mean": 156.41,
+                "stdDev": 233.31,
+                "p50": 36.52,
+                "p90": 503.11,
+                "p95": 685.65,
+                "p99": 1025.79
+              }
+            },
+            {
+              "targetRps": 50,
+              "actualRps": 49.36,
+              "requests": {
+                "total": 2965,
+                "success": 2965,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 2965,
+                "min": 8.01,
+                "max": 1616.12,
+                "mean": 106.32,
+                "stdDev": 147.61,
+                "p50": 41.06,
+                "p90": 294.36,
+                "p95": 403.59,
+                "p99": 646.46
+              }
+            },
+            {
+              "targetRps": 50,
+              "actualRps": 49.4,
+              "requests": {
+                "total": 2970,
+                "success": 2970,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 2970,
+                "min": 7.69,
+                "max": 976.65,
+                "mean": 86.35,
+                "stdDev": 100.94,
+                "p50": 42.53,
+                "p90": 234.93,
+                "p95": 295.89,
+                "p99": 473.5
+              }
+            }
+          ]
+        },
+        "100": {
+          "targetRps": 100,
+          "poolSize": 25,
+          "actualRps": {
+            "mean": 94.59,
+            "margin": 2.18
+          },
+          "errorRate": {
+            "mean": 0,
+            "margin": 0
+          },
+          "latency": {
+            "p50": {
+              "mean": 1229.62,
+              "margin": 890.66
+            },
+            "p95": {
+              "mean": 3813.14,
+              "margin": 804.92
+            },
+            "p99": {
+              "mean": 4046.83,
+              "margin": 705.44
+            }
+          },
+          "totals": {
+            "requests": 17526,
+            "success": 17526,
+            "failed": 0
+          },
+          "errors": {},
+          "meetsThresholds": false,
+          "rawIterations": [
+            {
+              "targetRps": 100,
+              "actualRps": 96.29,
+              "requests": {
+                "total": 5861,
+                "success": 5861,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 5861,
+                "min": 7.74,
+                "max": 4962.94,
+                "mean": 1640.47,
+                "stdDev": 1567.14,
+                "p50": 1040.73,
+                "p90": 4301.52,
+                "p95": 4587.87,
+                "p99": 4754.38
+              }
+            },
+            {
+              "targetRps": 100,
+              "actualRps": 94.98,
+              "requests": {
+                "total": 5832,
+                "success": 5832,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 5832,
+                "min": 9.71,
+                "max": 3909.02,
+                "mean": 948.29,
+                "stdDev": 980.47,
+                "p50": 554.18,
+                "p90": 2551.05,
+                "p95": 3189.55,
+                "p99": 3578.39
+              }
+            },
+            {
+              "targetRps": 100,
+              "actualRps": 92.5,
+              "requests": {
+                "total": 5833,
+                "success": 5833,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 5833,
+                "min": 19.18,
+                "max": 4068.02,
+                "mean": 2072.82,
+                "stdDev": 1158.59,
+                "p50": 2093.95,
+                "p90": 3571,
+                "p95": 3662,
+                "p99": 3807.72
+              }
+            }
+          ]
+        },
+        "200": {
+          "targetRps": 200,
+          "poolSize": 25,
+          "actualRps": {
+            "mean": 146.6,
+            "margin": 6.3
+          },
+          "errorRate": {
+            "mean": 34,
+            "margin": 8.48
+          },
+          "latency": {
+            "p50": {
+              "mean": 15004.52,
+              "margin": 1.59
+            },
+            "p95": {
+              "mean": 15379.63,
+              "margin": 108.68
+            },
+            "p99": {
+              "mean": 15587.71,
+              "margin": 246.51
+            }
+          },
+          "totals": {
+            "requests": 33088,
+            "success": 21892,
+            "failed": 11196
+          },
+          "errors": {
+            "HTTP_500": 4305
+          },
+          "meetsThresholds": false,
+          "rawIterations": [
+            {
+              "targetRps": 200,
+              "actualRps": 149.32,
+              "requests": {
+                "total": 11245,
+                "success": 7296,
+                "failed": 3949
+              },
+              "errorRate": 35.12,
+              "errors": {
+                "HTTP_500": 3949
+              },
+              "latency": {
+                "count": 11245,
+                "min": 56,
+                "max": 16078.45,
+                "mean": 12936.06,
+                "stdDev": 4392.21,
+                "p50": 15003.27,
+                "p90": 15284.39,
+                "p95": 15362.95,
+                "p99": 15519.7
+              }
+            },
+            {
+              "targetRps": 200,
+              "actualRps": 150.29,
+              "requests": {
+                "total": 11312,
+                "success": 8370,
+                "failed": 2942
+              },
+              "errorRate": 26.01,
+              "errors": {
+                "HTTP_500": 2942
+              },
+              "latency": {
+                "count": 11312,
+                "min": 34.73,
+                "max": 15665.12,
+                "mean": 12814.68,
+                "stdDev": 4538.32,
+                "p50": 15006.04,
+                "p90": 15236.89,
+                "p95": 15293.02,
+                "p99": 15411.99
+              }
+            },
+            {
+              "targetRps": 200,
+              "actualRps": 140.2,
+              "requests": {
+                "total": 10531,
+                "success": 6226,
+                "failed": 4305
+              },
+              "errorRate": 40.88,
+              "errors": {
+                "HTTP_500": 4305
+              },
+              "latency": {
+                "count": 10531,
+                "min": 36.33,
+                "max": 16592.07,
+                "mean": 12330.36,
+                "stdDev": 4947.23,
+                "p50": 15004.26,
+                "p90": 15330.38,
+                "p95": 15482.91,
+                "p99": 15831.44
+              }
+            }
+          ]
+        },
+        "300": {
+          "targetRps": 300,
+          "poolSize": 25,
+          "actualRps": {
+            "mean": 182.05,
+            "margin": 7.5
+          },
+          "errorRate": {
+            "mean": 28,
+            "margin": 4.41
+          },
+          "latency": {
+            "p50": {
+              "mean": 15016.88,
+              "margin": 27.38
+            },
+            "p95": {
+              "mean": 15243.33,
+              "margin": 27.66
+            },
+            "p99": {
+              "mean": 15372.23,
+              "margin": 23.06
+            }
+          },
+          "totals": {
+            "requests": 41171,
+            "success": 29679,
+            "failed": 11492
+          },
+          "errors": {
+            "HTTP_500": 3448
+          },
+          "meetsThresholds": false,
+          "rawIterations": [
+            {
+              "targetRps": 300,
+              "actualRps": 174.4,
+              "requests": {
+                "total": 13128,
+                "success": 8895,
+                "failed": 4233
+              },
+              "errorRate": 32.24,
+              "errors": {
+                "HTTP_500": 4233
+              },
+              "latency": {
+                "count": 13128,
+                "min": 122.25,
+                "max": 15778.24,
+                "mean": 14120.83,
+                "stdDev": 2934.96,
+                "p50": 15044.81,
+                "p90": 15204.55,
+                "p95": 15270.33,
+                "p99": 15389.64
+              }
+            },
+            {
+              "targetRps": 300,
+              "actualRps": 186.01,
+              "requests": {
+                "total": 14004,
+                "success": 10193,
+                "failed": 3811
+              },
+              "errorRate": 27.21,
+              "errors": {
+                "HTTP_500": 3811
+              },
+              "latency": {
+                "count": 14004,
+                "min": 31.17,
+                "max": 15604.34,
+                "mean": 12593.09,
+                "stdDev": 4657.69,
+                "p50": 15003.39,
+                "p90": 15187.9,
+                "p95": 15236.98,
+                "p99": 15377.24
+              }
+            },
+            {
+              "targetRps": 300,
+              "actualRps": 185.75,
+              "requests": {
+                "total": 14039,
+                "success": 10591,
+                "failed": 3448
+              },
+              "errorRate": 24.56,
+              "errors": {
+                "HTTP_500": 3448
+              },
+              "latency": {
+                "count": 14039,
+                "min": 101.26,
+                "max": 15595.54,
+                "mean": 12158.48,
+                "stdDev": 4940.43,
+                "p50": 15002.43,
+                "p90": 15182.65,
+                "p95": 15222.69,
+                "p99": 15349.81
+              }
+            }
+          ]
+        }
+      },
+      "maxSustainableRps": 50,
+      "breakingPoint": {
+        "rps": 100,
+        "errorRate": 0,
+        "p95": 3813.14
+      }
+    },
+    "50": {
+      "poolSize": 50,
+      "loadLevels": {
+        "10": {
+          "targetRps": 10,
+          "poolSize": 50,
+          "actualRps": {
+            "mean": 9.96,
+            "margin": 0.01
+          },
+          "errorRate": {
+            "mean": 0,
+            "margin": 0
+          },
+          "latency": {
+            "p50": {
+              "mean": 11.19,
+              "margin": 0.94
+            },
+            "p95": {
+              "mean": 165.77,
+              "margin": 271.79
+            },
+            "p99": {
+              "mean": 923.08,
+              "margin": 1668.47
+            }
+          },
+          "totals": {
+            "requests": 1793,
+            "success": 1793,
+            "failed": 0
+          },
+          "errors": {},
+          "meetsThresholds": true,
+          "rawIterations": [
+            {
+              "targetRps": 10,
+              "actualRps": 9.97,
+              "requests": {
+                "total": 598,
+                "success": 598,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 598,
+                "min": 7.62,
+                "max": 88.89,
+                "mean": 12.55,
+                "stdDev": 6.79,
+                "p50": 10.89,
+                "p90": 15.15,
+                "p95": 23.87,
+                "p99": 48.67
+              }
+            },
+            {
+              "targetRps": 10,
+              "actualRps": 9.95,
+              "requests": {
+                "total": 597,
+                "success": 597,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 597,
+                "min": 7.69,
+                "max": 3532.46,
+                "mean": 104.74,
+                "stdDev": 378.79,
+                "p50": 12.13,
+                "p90": 158.5,
+                "p95": 443.08,
+                "p99": 2625.39
+              }
+            },
+            {
+              "targetRps": 10,
+              "actualRps": 9.97,
+              "requests": {
+                "total": 598,
+                "success": 598,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 598,
+                "min": 8.05,
+                "max": 101.16,
+                "mean": 13.67,
+                "stdDev": 12.78,
+                "p50": 10.55,
+                "p90": 15.9,
+                "p95": 30.36,
+                "p99": 95.18
+              }
+            }
+          ]
+        },
+        "25": {
+          "targetRps": 25,
+          "poolSize": 50,
+          "actualRps": {
+            "mean": 24.84,
+            "margin": 0.07
+          },
+          "errorRate": {
+            "mean": 0,
+            "margin": 0
+          },
+          "latency": {
+            "p50": {
+              "mean": 12.48,
+              "margin": 2.25
+            },
+            "p95": {
+              "mean": 209.78,
+              "margin": 249.48
+            },
+            "p99": {
+              "mean": 557.8,
+              "margin": 536.57
+            }
+          },
+          "totals": {
+            "requests": 4475,
+            "success": 4475,
+            "failed": 0
+          },
+          "errors": {},
+          "meetsThresholds": true,
+          "rawIterations": [
+            {
+              "targetRps": 25,
+              "actualRps": 24.87,
+              "requests": {
+                "total": 1492,
+                "success": 1492,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 1492,
+                "min": 7.82,
+                "max": 915.16,
+                "mean": 22.81,
+                "stdDev": 62.39,
+                "p50": 10.93,
+                "p90": 28.97,
+                "p95": 63.99,
+                "p99": 292.65
+              }
+            },
+            {
+              "targetRps": 25,
+              "actualRps": 24.77,
+              "requests": {
+                "total": 1490,
+                "success": 1490,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 1490,
+                "min": 8.51,
+                "max": 2424.84,
+                "mean": 91.41,
+                "stdDev": 224.03,
+                "p50": 14.73,
+                "p90": 300.05,
+                "p95": 463.41,
+                "p99": 1105.23
+              }
+            },
+            {
+              "targetRps": 25,
+              "actualRps": 24.88,
+              "requests": {
+                "total": 1493,
+                "success": 1493,
+                "failed": 0
+              },
+              "errorRate": 0,
+              "errors": {},
+              "latency": {
+                "count": 1493,
+                "min": 7.69,
+                "max": 521.35,
+                "mean": 26.59,
+                "stdDev": 47.52,
+                "p50": 11.79,
+                "p90": 54.99,
+                "p95": 101.94,
+                "p99": 275.52
+              }
+            }
+          ]
+        },
+        "50": {
+          "targetRps": 50,
+          "poolSize": 50,
+          "actualRps": {
+            "mean": 49.5,
+            "margin": 0.03
+          },
+          "errorRate": {
+            "mean": 100,
+            "margin": 0
+          },
+          "latency": {
+            "p50": {
+              "mean": 0.67,
+              "margin": 0.03
+            },
+            "p95": {
+              "mean": 1.19,
+              "margin": 0.17
+            },
+            "p99": {
+              "mean": 5.21,
+              "margin": 6.04
+            }
+          },
+          "totals": {
+            "requests": 8910,
+            "success": 0,
+            "failed": 8910
+          },
+          "errors": {
+            "connect ECONNREFUSED 127.0.0.1:3001": 2968
+          },
+          "meetsThresholds": false,
+          "rawIterations": [
+            {
+              "targetRps": 50,
+              "actualRps": 49.53,
+              "requests": {
+                "total": 2972,
+                "success": 0,
+                "failed": 2972
+              },
+              "errorRate": 100,
+              "errors": {
+                "connect ECONNREFUSED 127.0.0.1:3001": 2972
+              },
+              "latency": {
+                "count": 2972,
+                "min": 0.41,
+                "max": 16.63,
+                "mean": 1,
+                "stdDev": 1.69,
+                "p50": 0.69,
+                "p90": 1.03,
+                "p95": 1.32,
+                "p99": 11.36
+              }
+            },
+            {
+              "targetRps": 50,
+              "actualRps": 49.5,
+              "requests": {
+                "total": 2970,
+                "success": 0,
+                "failed": 2970
+              },
+              "errorRate": 100,
+              "errors": {
+                "connect ECONNREFUSED 127.0.0.1:3001": 2970
+              },
+              "latency": {
+                "count": 2970,
+                "min": 0.39,
+                "max": 7.16,
+                "mean": 0.69,
+                "stdDev": 0.27,
+                "p50": 0.64,
+                "p90": 0.87,
+                "p95": 1.03,
+                "p99": 1.88
+              }
+            },
+            {
+              "targetRps": 50,
+              "actualRps": 49.47,
+              "requests": {
+                "total": 2968,
+                "success": 0,
+                "failed": 2968
+              },
+              "errorRate": 100,
+              "errors": {
+                "connect ECONNREFUSED 127.0.0.1:3001": 2968
+              },
+              "latency": {
+                "count": 2968,
+                "min": 0.41,
+                "max": 24.97,
+                "mean": 0.78,
+                "stdDev": 0.65,
+                "p50": 0.68,
+                "p90": 1.04,
+                "p95": 1.21,
+                "p99": 2.38
+              }
+            }
+          ]
+        }
+      },
+      "maxSustainableRps": 25,
+      "breakingPoint": {
+        "rps": 50,
+        "errorRate": 100,
+        "p95": 1.19
+      }
+    }
+  },
+  "analysis": {
+    "bestConfiguration": {
+      "poolSize": 25,
+      "maxRps": 50
+    },
+    "comparisonByPoolSize": [
+      {
+        "poolSize": 10,
+        "maxSustainableRps": 25,
+        "breakingPoint": {
+          "rps": 50,
+          "errorRate": 4.34,
+          "p95": 7708.56
+        },
+        "throughputPerHour": 90000
+      },
+      {
+        "poolSize": 25,
+        "maxSustainableRps": 50,
+        "breakingPoint": {
+          "rps": 100,
+          "errorRate": 0,
+          "p95": 3813.14
+        },
+        "throughputPerHour": 180000
+      },
+      {
+        "poolSize": 50,
+        "maxSustainableRps": 25,
+        "breakingPoint": {
+          "rps": 50,
+          "errorRate": 100,
+          "p95": 1.19
+        },
+        "throughputPerHour": 90000
+      }
+    ]
+  }
+}

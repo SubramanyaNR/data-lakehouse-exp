@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="full menu.css">
+<title>Guruprasad Udupi Restaurant</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="shortcut icon" href="./favicon.svg" type="image/svg+xml">
+
+
+<!-- GOOGLE FONTS -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<header>
+  <div class="logo-wrap">
+  <a href="indexxxx.html" class="logo-link">
+    <img src="./assests/transparent-logo.svg" width="200" height="200" alt="UDUPI VEG - Home">
+  </a>
+</div>
+
+  <div class="menu-icon" id="menuBtn">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
+
+<nav class="nav">
+
+  <a href="#">Home</a>
+  <div class="nav-item">
+    <button class="nav-toggle">Pan Asian Cuisine ▾</button>
+    <div class="sub-menu">
+      <a href="#">Soup</a>
+      <a href="#">Starters</a>
+      <a href="#">Chinese Dishes</a>
+    </div>
+  </div>
+    
+
+  <!-- BREAKFAST -->
+  <div class="nav-item">
+    <button class="nav-toggle">Breakfast ▾</button>
+    <div class="sub-menu">
+      <a href="#">Dosa Specials</a>
+      <a href="#">Rawa Dosa Specials</a>
+      <a href="#">Uttapam Specials</a>
+      <a href="#">South Indian Delights</a>
+       <a href="#">Combo & Extra</a>
+    </div>
+  </div>
+
+  <!-- LUNCH -->
+  <div class="nav-item">
+    <button class="nav-toggle">Lunch & Dinner▾</button>
+    <div class="sub-menu">
+      <a href="#">Meals & Thalis</a>
+      <a href="#">Rice Items</a>
+      <a href="#">Roti & Naan</a>
+      <a href="#">Curries</a>
+      
+    </div>
+  </div>
+
+  <!-- BEVERAGES -->
+  <div class="nav-item">
+    <button class="nav-toggle">Beverages ▾</button>
+    <div class="sub-menu">
+      <a href="#">Milkshakes</a>
+      <a href="#">Hot Beverages</a>
+      <a href="#">Cold Beverages</a>
+      <a href="#">Juices</a>
+      <a href="#">Soda</a>
+      <a href="#">Mojito/Sharbath</a>
+    </div>
+  </div>
+
+  <a href="#">Desserts</a>
+  <a href="#">Rules</a>
+
+</nav>
+
+
+
+<section class="section">
+  <div>
+    <h1>Guruprasad Udupi Restaurant</h1>
+    <p>Since 1985 • Pure Vegetarian</p>
+  </div>
+</section>
+
+<div class="switch" id="themeSwitch">
+  <div class="circle"></div>
+</div>
+
+<script>
+/* MENU TOGGLE */
+document.getElementById("menuBtn").onclick = () => {
+  document.body.classList.toggle("nav-active");
+};
+
+/* DARK / LIGHT */
+document.getElementById("themeSwitch").onclick = () => {
+  document.body.classList.toggle("light");
+};
+</script>
+<script src="js/script.js"></script>
+
+
+
+
+
+</body>
+</html>

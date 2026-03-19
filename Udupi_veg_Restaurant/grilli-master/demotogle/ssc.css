@@ -1,0 +1,225 @@
+/* RESET */
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* BODY */
+body{
+  font-family:'Montserrat',sans-serif;
+  background:#1f2029;
+  color:#fff;
+  transition:0.3s;
+}
+
+/* HEADER */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  padding:20px 40px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:100;
+}
+
+.logo{
+  font-weight:800;
+  letter-spacing:2px;
+}
+.logo span{color:#c9a14a}
+
+/* MENU ICON */
+.menu-icon{
+  width:30px;
+  position:absolute;     
+  right:40px;            
+  top:25px;              
+  cursor:pointer;
+  z-index:1001;
+}
+.menu-icon div{
+  height:3px;
+  background:#fbeaea;
+  margin:6px 0;
+  transition:0.3s;
+}
+/* SUB MENU – HIDDEN BY DEFAULT */
+.sub-menu {
+  display: none;
+  margin-top: 8px;
+  padding-left: 16px;
+  border-left: 2px solid rgba(201,161,74,0.4);
+}
+
+/* SHOW ONLY WHEN ACTIVE */
+.nav-item.active .sub-menu {
+  display: block;
+}
+
+/* NAV CONTAINER – RIGHT SLIDE */
+.nav{
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 300px;
+  height: 100vh;
+  background: #111;
+  padding: 90px 25px 30px;
+  transition: right 0.4s ease;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+/* SHOW NAV */
+body.nav-active .nav{
+  right: 0;
+}
+
+/* MAIN LINKS */
+.nav > a{
+  display: block;
+  color: #0f0101;
+  font-size: 20px;
+  font-family: 'Poppins', sans-serif;
+  margin: 18px 0;
+  text-decoration: none;
+}
+.nav > a:hover{
+  color: #c9a14a;
+}
+/* MAIN MENU LINKS */
+.nav > a,
+.nav-toggle {
+  position: relative;
+  display: block;
+  color: #ffffff;              /* white by default */
+  font-size: 20px;
+  font-family: 'Poppins', sans-serif;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+/* HOVER COLOR */
+.nav > a:hover,
+.nav-toggle:hover {
+  color: #c9a14a;              /* yellow */
+}
+
+/* UNDERLINE EFFECT */
+.nav > a::after,
+.nav-toggle::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0%;
+  height: 2px;
+  background: #c9a14a;
+  transition: width 0.3s ease;
+}
+
+/* PAGE SYSTEM */
+.page {
+  display: none;
+  min-height: 100vh;
+  padding: 140px 40px 40px;
+}
+
+.page.active {
+  display: block;
+}
+
+
+/* SHOW UNDERLINE ON HOVER */
+.nav > a:hover::after,
+.nav-toggle:hover::after {
+  width: 100%;
+}
+
+/* ACTIVE (SELECTED) STATE */
+.nav > a.active,
+.nav-toggle.active {
+  color: #c9a14a;
+}
+
+/* KEEP UNDERLINE FOR ACTIVE ITEM */
+.nav > a.active::after,
+.nav-toggle.active::after {
+  width: 100%;
+}
+/* SUB MENU CONTAINER */
+.sub-menu {
+  display: none;
+  margin-top: 8px;
+  padding-left: 18px;
+  border-left: 2px solid rgba(201,161,74,0.4);
+}
+
+/* SHOW WHEN ACTIVE */
+.nav-item.active .sub-menu {
+  display: block;
+}
+
+/* SUB MENU LINKS */
+.sub-menu a {
+  display: block;              /* 👈 one item per line */
+  color: #ffffff;              /* white by default */
+  font-size: 16px;
+  font-family: 'Montserrat', sans-serif;
+  text-decoration: none;       /* ❌ no underline */
+  margin: 8px 0;
+  transition: color 0.3s ease;
+}
+
+/* HOVER EFFECT */
+.sub-menu a:hover {
+  color: #c9a14a;              /* yellow on hover */
+}
+
+
+/* DARK/LIGHT SWITCH */
+.switch{
+  position:fixed;
+  bottom:30px;
+  right:30px;
+  width:50px;
+  height:24px;
+  background:#c9a14a;
+  border-radius:20px;
+  cursor:pointer;
+}
+.circle{
+  width:20px;
+  height:20px;
+  background:#000;
+  border-radius:50%;
+  position:absolute;
+  top:2px;
+  left:2px;
+  transition:0.3s;
+}
+body.light{
+  background:#fff;
+  color:#000;
+}
+body.light .circle{left:28px;background:#fff}
+
+/* CONTENT */
+.section{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+.section h1{
+  font-size:42px;
+  margin-bottom:10px;
+}
+.section p{
+  letter-spacing:2px;
+  color:#c9a14a;
+}

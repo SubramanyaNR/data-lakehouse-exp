@@ -1,0 +1,255 @@
+/* RESET */
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* BODY */
+body{
+  font-family:'Montserrat',sans-serif;
+  background:#1f2029;
+  color:#fff;
+  transition:0.7s;
+}
+
+/* HEADER */
+
+
+.logo{
+  font-weight:1000;
+  letter-spacing:2px;
+}
+.logo span{color:#a78f5c}
+
+.logo-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.logo-link {
+  text-decoration: none;
+  text-align: center;
+}
+
+.udupi-logo {
+  width: 60px;        /* adjust if needed */
+  display: block;
+  margin: 0 auto 6px;
+}
+
+.logo-text {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #fff;
+}
+
+.logo-text span {
+  color: #a78f5c;
+}
+
+
+/* MENU ICON */
+.menu-icon{
+  width:30px;
+  cursor:pointer;
+}
+.menu-icon div{
+  height:3px;
+  background:#fff;
+  margin:6px 0;
+  transition:0.3s;
+}
+
+/* NAV */
+.nav-item {
+  margin: 10px 0;
+}
+/* NAV CONTAINER */
+.nav {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 280px;
+  height: 100vh;
+  background: #111;
+  padding: 100px 20px 30px;
+  transition: left 0.4s ease;
+  overflow-y: auto;
+  z-index: 99;
+}
+
+/* SHOW NAV */
+body.nav-active .nav {
+  left: 0;
+}
+
+/* MAIN LINKS */
+.nav > a {
+  display: block;
+  color: #fff;
+  font-size: 20px;
+  font-family: 'Poppins', sans-serif;
+  margin: 18px 0;
+  text-decoration: none;
+}
+
+.nav > a:hover {
+  color: #c9a14a;
+}
+
+/* NAV ITEM WRAPPER */
+.nav-item {
+  margin: 12px 0;
+}
+
+/* TOGGLE BUTTON */
+.nav-toggle {
+  width: 100%;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  font-family: 'Poppins', sans-serif;
+  text-align: left;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+/* TOGGLE HOVER */
+.nav-toggle:hover {
+  color: #c9a14a;
+}
+
+/* SUB MENU */
+.sub-menu {
+  display: none;
+  margin-top: 8px;
+  padding-left: 18px;
+  border-left: 2px solid rgba(201, 161, 74, 0.4);
+}
+
+/* SHOW SUB MENU WHEN ACTIVE */
+.nav-item.active .sub-menu {
+  display: block;
+}
+
+/* SUB MENU LINKS */
+.sub-menu a {
+  display: block;
+  font-size: 16px;
+  color: #c9a14a;
+  text-decoration: none;
+  margin: 8px 0;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* SUB MENU HOVER */
+.sub-menu a:hover {
+  color: #fff;
+}
+
+/* SCROLLBAR (OPTIONAL, NICE LOOK) */
+.nav::-webkit-scrollbar {
+  width: 6px;
+}
+.nav::-webkit-scrollbar-thumb {
+  background: #c9a14a;
+  border-radius: 10px;
+}
+
+
+/* CLICKABLE MAIN ITEM */
+.nav-toggle {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* SUB MENU HIDDEN BY DEFAULT */
+.sub-menu {
+  display: none;
+  padding-left: 20px;
+  margin-top: 8px;
+}
+
+/* SUB MENU LINKS */
+.sub-menu a {
+  display: block;
+  color: #c9a14a;
+  font-size: 16px;
+  margin: 6px 0;
+  text-decoration: none;
+}
+
+/* SHOW ONLY WHEN ACTIVE */
+.nav-item.active .sub-menu {
+  display: block;
+}
+
+.nav{
+  position:fixed;
+  top:0;
+  left:-100%;
+  width:260px;
+  height:100vh;
+  background:#111;
+  padding:80px 20px;
+  transition:0.4s;
+}
+body.nav-active .nav{left:0}
+
+.nav a{
+  display:block;
+  color:#fff;
+  text-decoration:none;
+  font-family:'Poppins',sans-serif;
+  font-size:20px;
+  margin:20px 0;
+}
+.nav a:hover{color:#c9a14a}
+
+/* DARK/LIGHT SWITCH */
+.switch{
+  position:fixed;
+  bottom:30px;
+  right:30px;
+  width:50px;
+  height:24px;
+  background:#c9a14a;
+  border-radius:20px;
+  cursor:pointer;
+}
+.circle{
+  width:20px;
+  height:20px;
+  background:#000;
+  border-radius:50%;
+  position:absolute;
+  top:2px;
+  left:2px;
+  transition:0.3s;
+}
+body.light{
+  background:#fff;
+  color:#000;
+}
+body.light .circle{left:28px;background:#fff}
+
+/* CONTENT */
+.section{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+.section h1{
+  font-size:42px;
+  margin-bottom:10px;
+}
+.section p{
+  letter-spacing:2px;
+  color:#c9a14a;
+}

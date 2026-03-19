@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kitchen Display - Guruprasad Udupi</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #222;
+    }
+    h1 { color: #ff6b00; font-size: 1.5rem; }
+    .refresh { color: #666; font-size: 0.9rem; }
+    .refresh span { color: #ff6b00; font-weight: bold; }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      height: calc(100vh - 100px);
+    }
+    .column {
+      background: #111;
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .column-header {
+      text-align: center;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    .col-new .column-header { background: #374151; }
+    .col-preparing .column-header { background: #ff6b00; }
+    .col-ready .column-header { background: #16a34a; }
+    .column-body {
+      flex: 1;
+      overflow-y: auto;
+    }
+    .order-card {
+      background: #1a1a1a;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      border-left: 4px solid #ff6b00;
+    }
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .order-id {
+      color: #ff6b00;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    .table-badge {
+      background: #333;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+    .customer-name {
+      color: #888;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    .order-items {
+      background: #222;
+      padding: 0.75rem;
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+    }
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.25rem 0;
+      font-size: 0.9rem;
+    }
+    .order-item-qty {
+      color: #ff6b00;
+      font-weight: bold;
+      margin-right: 0.5rem;
+    }
+    .order-time {
+      color: #666;
+      font-size: 0.8rem;
+      margin-bottom: 0.75rem;
+    }
+    .order-total {
+      color: #fff;
+      font-weight: bold;
+      margin-bottom: 0.75rem;
+    }
+    .btn {
+      width: 100%;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    .btn-start { background: #ff6b00; color: #fff; }
+    .btn-start:hover { background: #ff8533; }
+    .btn-ready { background: #16a34a; color: #fff; }
+    .btn-ready:hover { background: #22c55e; }
+    .btn-done { background: #7c3aed; color: #fff; }
+    .btn-done:hover { background: #8b5cf6; }
+    .count {
+      font-size: 0.85rem;
+      opacity: 0.8;
+      margin-left: 0.5rem;
+    }
+    .empty-state {
+      text-align: center;
+      color: #444;
+      padding: 2rem;
+      font-size: 0.9rem;
+    }
+    .time-elapsed {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+    }
+    .time-ok { background: #166534; color: #86efac; }
+    .time-warning { background: #854d0e; color: #fde047; }
+    .time-danger { background: #991b1b; color: #fca5a5; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🍳 Kitchen Display</h1>
+    <div class="refresh">Auto-refresh: <span id="countdown">5</span>s</div>
+  </header>
+
+  <div class="board">
+    <div class="column col-new">
+      <div class="column-header">📥 NEW <span class="count" id="newCount">(0)</span></div>
+      <div class="column-body" id="newOrders"></div>
+    </div>
+    <div class="column col-preparing">
+      <div class="column-header">👨‍🍳 PREPARING <span class="count" id="preparingCount">(0)</span></div>
+      <div class="column-body" id="preparingOrders"></div>
+    </div>
+    <div class="column col-ready">
+      <div class="column-header">✅ READY <span class="count" id="readyCount">(0)</span></div>
+      <div class="column-body" id="readyOrders"></div>
+    </div>
+  </div>
+
+  <script>
+    async function loadOrders() {
+      try {
+        const res = await fetch('/kitchen/orders');
+        const orders = await res.json();
+
+        const newOrders = orders.filter(o => o.status === 'NEW');
+        const preparing = orders.filter(o => o.status === 'PREPARING');
+        const ready = orders.filter(o => o.status === 'READY');
+
+        document.getElementById('newCount').textContent = `(${newOrders.length})`;
+        document.getElementById('preparingCount').textContent = `(${preparing.length})`;
+        document.getElementById('readyCount').textContent = `(${ready.length})`;
+
+        document.getElementById('newOrders').innerHTML =
+          newOrders.length > 0
+            ? newOrders.map(o => renderOrder(o, 'Start Preparing', 'PREPARING', 'btn-start')).join('')
+            : '<div class="empty-state">No new orders</div>';
+
+        document.getElementById('preparingOrders').innerHTML =
+          preparing.length > 0
+            ? preparing.map(o => renderOrder(o, 'Mark Ready', 'READY', 'btn-ready')).join('')
+            : '<div class="empty-state">Nothing cooking</div>';
+
+        document.getElementById('readyOrders').innerHTML =
+          ready.length > 0
+            ? ready.map(o => renderOrder(o, 'Mark Delivered', 'DELIVERED', 'btn-done')).join('')
+            : '<div class="empty-state">No orders ready</div>';
+
+      } catch (err) {
+        console.error('Failed to load orders:', err);
+      }
+    }
+
+    function renderOrder(order, btnText, nextStatus, btnClass) {
+      const timeAgo = getTimeAgo(order.created_at);
+      const timeClass = getTimeClass(order.created_at);
+
+      return `
+        <div class="order-card">
+          <div class="order-header">
+            <span class="order-id">${order.order_id}</span>
+            <span class="table-badge">Table ${order.table_number || '-'}</span>
+          </div>
+          <div class="customer-name">👤 ${order.customer_name || 'Walk-in'}</div>
+          <div class="order-items">
+            ${order.items.map(i => `
+              <div class="order-item">
+                <span><span class="order-item-qty">${i.qty}x</span> ${i.name}</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="order-time">
+            ⏱ Ordered: ${new Date(order.created_at).toLocaleTimeString()}
+            <span class="time-elapsed ${timeClass}">${timeAgo}</span>
+          </div>
+          <div class="order-total">Total: ₹${order.total_amount}</div>
+          <button class="btn ${btnClass}" onclick="updateStatus(${order.id}, '${nextStatus}')">${btnText} →</button>
+        </div>
+      `;
+    }
+
+    function getTimeAgo(timestamp) {
+      const mins = Math.floor((Date.now() - new Date(timestamp)) / 60000);
+      if (mins < 1) return 'Just now';
+      if (mins < 60) return mins + ' min ago';
+      return Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm ago';
+    }
+
+    function getTimeClass(timestamp) {
+      const mins = Math.floor((Date.now() - new Date(timestamp)) / 60000);
+      if (mins < 10) return 'time-ok';
+      if (mins < 20) return 'time-warning';
+      return 'time-danger';
+    }
+
+    async function updateStatus(orderId, status) {
+      try {
+        const res = await fetch('/kitchen/update-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId, status })
+        });
+
+        if (res.ok) {
+          loadOrders();
+        } else {
+          alert('Failed to update status');
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    }
+
+    // Auto-refresh countdown
+    let countdown = 5;
+    setInterval(() => {
+      countdown--;
+      document.getElementById('countdown').textContent = countdown;
+      if (countdown <= 0) {
+        countdown = 5;
+        loadOrders();
+      }
+    }, 1000);
+
+    // Initial load
+    loadOrders();
+  </script>
+</body>
+</html>

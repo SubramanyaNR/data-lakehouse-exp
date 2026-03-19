@@ -1,0 +1,83 @@
+  PostgreSQL Benchmark
+  Target: localhost:3001
+════════════════════════════════════════
+
+▶ Warm-up: 10 req/s for 30s
+  ✓ 298 requests | 9.9 req/s | 0.00% errors | p95: 32ms | p99: 73ms
+
+▶ Light: 50 req/s for 60s
+  ✓ 2952 requests | 49.2 req/s | 0.00% errors | p95: 108ms | p99: 311ms
+
+▶ Medium: 100 req/s for 60s
+  ✓ 5822 requests | 97.0 req/s | 0.00% errors | p95: 423ms | p99: 597ms
+
+▶ Heavy: 200 req/s for 60s
+  ✓ 8652 requests | 144.2 req/s | 0.00% errors | p95: 15102ms | p99: 15189ms
+
+▶ Stress: 300 req/s for 60s
+  ✓ 10217 requests | 170.3 req/s | 100.00% errors | p95: 15195ms | p99: 15387ms
+
+▶ Cool-down: 10 req/s for 30s
+  ✓ 298 requests | 9.9 req/s | 100.00% errors | p95: 11649ms | p99: 12851ms
+
+════════════════════════════════════════
+  Results Summary
+════════════════════════════════════════
+  Total: 33611 | Success: 23547 | Failed: 10064
+  Error Rate: 29.94%
+  p50: 15001ms
+  p95: 15109ms
+  p99: 15274ms
+
+⚠️  Breaking point: Heavy (144.2 req/s)
+
+  "stats": {
+    "total": 33611,
+    "success": 23547,
+    "failed": 10064,
+    "times": [
+
+  "results": [
+    {
+      "phase": "Warm-up",
+      "rps": "9.9",
+      "errors": "0.00",
+      "p95": 32,
+      "p99": 73
+    },
+    {
+      "phase": "Light",
+      "rps": "49.2",
+      "errors": "0.00",
+      "p95": 108,
+      "p99": 311
+    },
+    {
+      "phase": "Medium",
+      "rps": "97.0",
+      "errors": "0.00",
+      "p95": 423,
+      "p99": 597
+    },
+    {
+      "phase": "Heavy",
+      "rps": "144.2",
+      "errors": "0.00",
+      "p95": 15102,
+      "p99": 15189
+    },
+    {
+      "phase": "Stress",
+      "rps": "170.3",
+      "errors": "100.00",
+      "p95": 15195,
+      "p99": 15387
+    },
+    {
+      "phase": "Cool-down",
+      "rps": "9.9",
+      "errors": "100.00",
+      "p95": 11649,
+      "p99": 12851
+    }
+  ]

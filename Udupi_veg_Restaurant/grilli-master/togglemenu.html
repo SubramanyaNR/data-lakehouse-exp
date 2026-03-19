@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu - Guruprasad Udupi</title>
+  <style>
+    :root {
+      --primary: #ff6b00;
+      --bg: #1a1a1a;
+      --card: #222;
+      --text: #fff;
+      --muted: #888;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+    header {
+      background: var(--primary);
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-size: 1.25rem; font-weight: bold; }
+    .header-actions { display: flex; gap: 0.5rem; }
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+    .btn-white { background: #fff; color: var(--primary); }
+    .btn-outline { background: transparent; border: 1px solid #fff; color: #fff; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 1rem; }
+    .hidden { display: none !important; }
+    .page-title { margin-bottom: 1rem; color: var(--primary); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    .category-card {
+      background: var(--card);
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+    .category-card:hover {
+      background: var(--primary);
+      transform: translateY(-2px);
+    }
+    .item-card {
+      background: var(--card);
+      padding: 1rem;
+      border-radius: 12px;
+    }
+    .item-name { font-weight: 500; margin-bottom: 0.25rem; }
+    .item-price { color: var(--primary); margin-bottom: 0.75rem; }
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .qty-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+    .qty-value {
+      font-size: 1.1rem;
+      font-weight: bold;
+      min-width: 30px;
+      text-align: center;
+    }
+    .nav-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .cart-section {
+      background: var(--card);
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #333;
+    }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-total {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin: 1rem 0;
+      color: var(--primary);
+    }
+    .form-field {
+      margin-bottom: 1rem;
+    }
+    .form-field label {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+      font-size: 0.9rem;
+    }
+    .form-field input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #444;
+      border-radius: 8px;
+      background: #333;
+      color: #fff;
+      font-size: 1rem;
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 1rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    .btn-primary:hover { background: #ff8533; }
+    .btn-secondary {
+      background: #333;
+      color: #fff;
+    }
+    .floating-cart {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 400px;
+      padding: 1rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      z-index: 50;
+    }
+    .popup {
+      position: fixed;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: #fff;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      z-index: 200;
+      transition: top 0.3s;
+    }
+    .popup.show { top: 20px; }
+    .user-badge {
+      background: rgba(255,255,255,0.2);
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="logo">🍽️ Guruprasad Udupi</span>
+  <div class="header-actions">
+    <span id="userBadge" class="user-badge hidden"></span>
+    <button id="authBtn" class="btn btn-white" onclick="goAuth()">Login</button>
+  </div>
+</header>
+
+<div id="popup" class="popup"></div>
+
+<div class="container">
+
+  <!-- INDEX PAGE -->
+  <section id="indexPage">
+    <h2 class="page-title">Menu Categories</h2>
+    <div class="grid" id="categoriesGrid">
+      <div class="category-card">Loading...</div>
+    </div>
+  </section>
+
+  <!-- CATEGORY PAGE -->
+  <section id="categoryPage" class="hidden">
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goIndex()">← Back</button>
+      <button class="btn btn-secondary" onclick="nextCategory()">Next →</button>
+    </div>
+    <h2 class="page-title" id="categoryTitle"></h2>
+    <div class="grid" id="menuGrid"></div>
+  </section>
+
+  <!-- CART PAGE -->
+  <section id="cartPage" class="hidden">
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goCategory()">← Back</button>
+    </div>
+    <h2 class="page-title">Your Order</h2>
+    <div class="cart-section">
+      <div id="cartItems"></div>
+      <div class="cart-total">Total: ₹<span id="cartTotal">0</span></div>
+    </div>
+    <div class="form-field">
+      <label>Your Name</label>
+      <input type="text" id="customerName" placeholder="Enter your name">
+    </div>
+    <div class="form-field">
+      <label>Table Number</label>
+      <input type="number" id="tableNumber" placeholder="Enter table number">
+    </div>
+    <button class="btn-primary" onclick="placeOrder()">Place Order</button>
+  </section>
+
+  <!-- ORDER CONFIRMATION -->
+  <section id="confirmPage" class="hidden">
+    <div style="text-align:center; padding:2rem;">
+      <div style="font-size:4rem; margin-bottom:1rem;">✅</div>
+      <h2 style="color:var(--primary); margin-bottom:0.5rem;">Order Placed!</h2>
+      <p style="color:var(--muted); margin-bottom:1rem;">Your order ID:</p>
+      <p id="confirmOrderId" style="font-size:1.5rem; font-weight:bold; margin-bottom:2rem;"></p>
+      <button class="btn-primary" onclick="trackMyOrder()" style="margin-bottom:1rem;">Track Order</button>
+      <br>
+      <button class="btn btn-secondary" onclick="newOrder()">New Order</button>
+    </div>
+  </section>
+
+</div>
+
+<button id="viewCartBtn" class="floating-cart hidden" onclick="goCart()">
+  View Cart (<span id="cartCount">0</span> items) - ₹<span id="cartTotalFloat">0</span>
+</button>
+
+<script>
+  // State
+  let categories = [];
+  let menuData = {};
+  let currentCategoryIndex = 0;
+  let cart = {};
+  let lastOrderId = null;
+
+  // Auth state
+  const token = localStorage.getItem('token');
+  const customer = JSON.parse(localStorage.getItem('customer') || 'null');
+
+  if (customer) {
+    document.getElementById('userBadge').textContent = '👤 ' + (customer.name || customer.phone);
+    document.getElementById('userBadge').classList.remove('hidden');
+    document.getElementById('authBtn').textContent = 'Profile';
+    document.getElementById('customerName').value = customer.name || '';
+  }
+
+  function goAuth() {
+    if (customer) {
+      window.location.href = '/profile';
+    } else {
+      window.location.href = '/login';
+    }
+  }
+
+  // Load menu from API
+  async function loadMenu() {
+    try {
+      const res = await fetch('/api/menu');
+      const data = await res.json();
+
+      if (data.success && data.menu.length > 0) {
+        categories = data.menu.map(c => c.name.toLowerCase());
+
+        data.menu.forEach(cat => {
+          menuData[cat.name.toLowerCase()] = cat.items.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: parseFloat(item.price)
+          }));
+        });
+
+        renderCategoryButtons();
+      }
+    } catch (err) {
+      console.error('Failed to load menu:', err);
+    }
+  }
+
+  function renderCategoryButtons() {
+    document.getElementById('categoriesGrid').innerHTML = categories.map(cat =>
+      `<div class="category-card" onclick="openCategory('${cat}')">${cat.charAt(0).toUpperCase() + cat.slice(1)}</div>`
+    ).join('');
+  }
+
+  // Navigation
+  function hideAll() {
+    ['indexPage', 'categoryPage', 'cartPage', 'confirmPage'].forEach(id => {
+      document.getElementById(id).classList.add('hidden');
+    });
+  }
+
+  function openCategory(cat) {
+    hideAll();
+    currentCategoryIndex = categories.indexOf(cat);
+    document.getElementById('categoryPage').classList.remove('hidden');
+    document.getElementById('viewCartBtn').classList.remove('hidden');
+    renderCategory();
+  }
+
+  function renderCategory() {
+    const cat = categories[currentCategoryIndex];
+    document.getElementById('categoryTitle').textContent = cat.toUpperCase();
+
+    document.getElementById('menuGrid').innerHTML = menuData[cat].map(item => {
+      cart[item.id] = cart[item.id] || 0;
+      return `
+        <div class="item-card">
+          <div class="item-name">${item.name}</div>
+          <div class="item-price">₹${item.price}</div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="updateQty(${item.id}, -1)">−</button>
+            <span class="qty-value">${cart[item.id]}</span>
+            <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function updateQty(id, change) {
+    cart[id] = Math.max(0, (cart[id] || 0) + change);
+    renderCategory();
+    updateCartBadge();
+  }
+
+  function updateCartBadge() {
+    const count = Object.values(cart).reduce((a, b) => a + b, 0);
+    const total = calculateTotal();
+
+    document.getElementById('cartCount').textContent = count;
+    document.getElementById('cartTotalFloat').textContent = total;
+
+    if (count > 0) {
+      document.getElementById('viewCartBtn').classList.remove('hidden');
+    }
+  }
+
+  function calculateTotal() {
+    let total = 0;
+    Object.keys(cart).forEach(id => {
+      if (cart[id] > 0) {
+        const item = Object.values(menuData).flat().find(x => x.id == id);
+        if (item) total += item.price * cart[id];
+      }
+    });
+    return total;
+  }
+
+  function nextCategory() {
+    currentCategoryIndex = (currentCategoryIndex + 1) % categories.length;
+    openCategory(categories[currentCategoryIndex]);
+  }
+
+  function goIndex() {
+    hideAll();
+    document.getElementById('indexPage').classList.remove('hidden');
+    document.getElementById('viewCartBtn').classList.add('hidden');
+  }
+
+  function goCategory() {
+    hideAll();
+    document.getElementById('categoryPage').classList.remove('hidden');
+    document.getElementById('viewCartBtn').classList.remove('hidden');
+    renderCategory();
+  }
+
+  function goCart() {
+    hideAll();
+    document.getElementById('cartPage').classList.remove('hidden');
+    document.getElementById('viewCartBtn').classList.add('hidden');
+    renderCart();
+  }
+
+  function renderCart() {
+    let html = '';
+    let total = 0;
+
+    Object.keys(cart).forEach(id => {
+      if (cart[id] > 0) {
+        const item = Object.values(menuData).flat().find(x => x.id == id);
+        if (item) {
+          const subtotal = item.price * cart[id];
+          total += subtotal;
+          html += `<div class="cart-item">
+            <span>${cart[id]}x ${item.name}</span>
+            <span>₹${subtotal}</span>
+          </div>`;
+        }
+      }
+    });
+
+    document.getElementById('cartItems').innerHTML = html || '<p style="color:#888;">Cart is empty</p>';
+    document.getElementById('cartTotal').textContent = total;
+  }
+
+  async function placeOrder() {
+    const items = [];
+    Object.keys(cart).forEach(id => {
+      if (cart[id] > 0) {
+        const item = Object.values(menuData).flat().find(x => x.id == id);
+        if (item) {
+          items.push({ name: item.name, price: item.price, qty: cart[id] });
+        }
+      }
+    });
+
+    if (items.length === 0) {
+      showPopup('Cart is empty!');
+      return;
+    }
+
+    const orderData = {
+      items: items,
+      tableNumber: parseInt(document.getElementById('tableNumber').value) || 0,
+      customerName: document.getElementById('customerName').value || 'Walk-in'
+    };
+
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = 'Bearer ' + token;
+      }
+
+      const res = await fetch('/place-order', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(orderData)
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        lastOrderId = data.orderId;
+        cart = {};
+        updateCartBadge();
+
+        hideAll();
+        document.getElementById('confirmPage').classList.remove('hidden');
+        document.getElementById('confirmOrderId').textContent = data.orderId;
+      } else {
+        showPopup('Order failed: ' + data.error);
+      }
+    } catch (err) {
+      showPopup('Error: ' + err.message);
+    }
+  }
+
+  function trackMyOrder() {
+    window.location.href = '/track?id=' + lastOrderId;
+  }
+
+  function newOrder() {
+    goIndex();
+  }
+
+  function showPopup(msg) {
+    const popup = document.getElementById('popup');
+    popup.textContent = msg;
+    popup.classList.add('show');
+    setTimeout(() => popup.classList.remove('show'), 3000);
+  }
+
+  // Initialize
+  loadMenu();
+</script>
+</body>
+</html>

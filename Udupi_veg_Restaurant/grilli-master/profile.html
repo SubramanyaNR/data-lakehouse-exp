@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - Guruprasad Udupi</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    .container { max-width: 600px; margin: 0 auto; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #333;
+    }
+    h1 { color: #ff6b00; font-size: 1.5rem; }
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+    .btn-primary { background: #ff6b00; color: #fff; }
+    .btn-primary:hover { background: #ff8533; }
+    .btn-secondary { background: #333; color: #fff; }
+    .btn-secondary:hover { background: #444; }
+    .nav { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .card {
+      background: #222;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+    .card h2 {
+      color: #ff6b00;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .points-display {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+    .points {
+      font-size: 2.5rem;
+      color: #ff6b00;
+      font-weight: bold;
+    }
+    .points-label { color: #888; font-size: 0.9rem; }
+    .points-info { color: #666; font-size: 0.8rem; margin-top: 0.5rem; }
+    .field { margin-bottom: 1rem; }
+    .field label {
+      display: block;
+      color: #888;
+      margin-bottom: 0.3rem;
+      font-size: 0.85rem;
+    }
+    .field input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #444;
+      border-radius: 8px;
+      background: #333;
+      color: #fff;
+      font-size: 1rem;
+    }
+    .field input:focus { outline: none; border-color: #ff6b00; }
+    .field input:disabled { background: #2a2a2a; color: #888; }
+    
+    /* Collapsible Section */
+    .collapsible-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      padding: 1rem;
+      background: #222;
+      border-radius: 12px;
+      margin-bottom: 0.5rem;
+    }
+    .collapsible-header h2 {
+      color: #ff6b00;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+    .collapsible-header .toggle {
+      color: #ff6b00;
+      font-size: 1.2rem;
+      transition: transform 0.3s;
+    }
+    .collapsible-header.open .toggle {
+      transform: rotate(180deg);
+    }
+    .collapsible-content {
+      display: none;
+      background: #222;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .collapsible-content.open {
+      display: block;
+    }
+
+    /* Orders */
+    .order {
+      background: #2a2a2a;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-left: 4px solid #444;
+    }
+    .order:hover {
+      background: #333;
+    }
+    .order.active {
+      border-left-color: #ff6b00;
+    }
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .order-id { color: #ff6b00; font-weight: bold; font-size: 0.95rem; }
+    .order-status {
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .status-NEW { background: #444; color: #fff; }
+    .status-CONFIRMED { background: #2563eb; color: #fff; }
+    .status-PREPARING { background: #ff6b00; color: #fff; }
+    .status-READY { background: #16a34a; color: #fff; }
+    .status-DELIVERED { background: #7c3aed; color: #fff; }
+    .status-CANCELLED { background: #dc2626; color: #fff; }
+    .order-items { color: #ccc; font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .order-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #888;
+      font-size: 0.85rem;
+    }
+    .order-total { color: #fff; font-weight: bold; }
+    .empty { color: #666; text-align: center; padding: 2rem; }
+    .save-message {
+      padding: 0.5rem;
+      border-radius: 6px;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .save-message.success { background: rgba(68,255,68,0.2); color: #6bff6b; }
+    .save-message.error { background: rgba(255,68,68,0.2); color: #ff6b6b; }
+
+    /* Active Orders Section */
+    .active-orders-section {
+      background: linear-gradient(135deg, #2a2a2a 0%, #222 100%);
+      border: 1px solid #ff6b00;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .active-orders-section h3 {
+      color: #ff6b00;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .active-badge {
+      display: inline-block;
+      background: #ff6b00;
+      color: #fff;
+      padding: 0.15rem 0.5rem;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+    }
+
+    /* Order Detail Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal {
+      background: #222;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 450px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #333;
+    }
+    .modal-header h3 {
+      color: #ff6b00;
+      font-size: 1.1rem;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .modal-body {
+      padding: 1.5rem;
+    }
+    .modal-section {
+      margin-bottom: 1.5rem;
+    }
+    .modal-section h4 {
+      color: #888;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    .timeline {
+      padding-left: 1rem;
+      border-left: 2px solid #333;
+    }
+    .timeline-step {
+      position: relative;
+      padding: 0 0 1rem 1.5rem;
+    }
+    .timeline-step:last-child { padding-bottom: 0; }
+    .timeline-dot {
+      position: absolute;
+      left: -1.4rem;
+      top: 0;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #333;
+    }
+    .timeline-dot.done { background: #16a34a; }
+    .timeline-dot.current { background: #ff6b00; animation: pulse 1.5s infinite; }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,0,0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(255,107,0,0); }
+    }
+    .timeline-label { color: #666; font-size: 0.9rem; }
+    .timeline-label.done { color: #16a34a; }
+    .timeline-label.current { color: #ff6b00; font-weight: bold; }
+    .modal-items {
+      background: #1a1a1a;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .modal-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #333;
+    }
+    .modal-item:last-child { border-bottom: none; }
+    .modal-total {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 1rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #444;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    .modal-total span:last-child { color: #ff6b00; }
+    .modal-actions {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid #333;
+    }
+    .btn-track {
+      width: 100%;
+      padding: 0.85rem;
+      background: #ff6b00;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .reorder-btn {
+      width: 100%;
+      padding: 0.85rem;
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>👤 My Profile</h1>
+      <button class="btn btn-secondary" onclick="logout()">Logout</button>
+    </header>
+
+    <div class="nav">
+      <a href="/menu"><button class="btn btn-secondary">← Menu</button></a>
+      <a href="/track"><button class="btn btn-secondary">📍 Track Order</button></a>
+    </div>
+
+    <!-- Active Orders (Always Visible if any) -->
+    <div id="activeOrdersSection" class="active-orders-section" style="display:none;">
+      <h3>🔥 Active Orders <span class="active-badge" id="activeCount">0</span></h3>
+      <div id="activeOrders"></div>
+    </div>
+
+    <!-- Loyalty Points -->
+    <div class="card">
+      <h2>⭐ Loyalty Points</h2>
+      <div class="points-display">
+        <span class="points" id="points">0</span>
+        <span class="points-label">points</span>
+      </div>
+      <p class="points-info">Earn 1 point for every ₹10 spent</p>
+    </div>
+
+    <!-- Profile Details -->
+    <div class="card">
+      <h2>📝 Profile Details</h2>
+      <div id="saveMessage"></div>
+      <div class="field">
+        <label>Name</label>
+        <input type="text" id="name" placeholder="Your name">
+      </div>
+      <div class="field">
+        <label>Phone</label>
+        <input type="tel" id="phone" disabled>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="email" placeholder="Your email">
+      </div>
+      <div class="field">
+        <label>Address</label>
+        <input type="text" id="address" placeholder="Delivery address">
+      </div>
+      <div class="field">
+        <label>City</label>
+        <input type="text" id="city" placeholder="City">
+      </div>
+      <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
+    </div>
+
+    <!-- Order History (Collapsible) -->
+    <div class="collapsible-header" onclick="toggleOrderHistory()">
+      <h2>📦 Order History</h2>
+      <span class="toggle">▼</span>
+    </div>
+    <div id="orderHistoryContent" class="collapsible-content">
+      <div id="orderHistory">Loading...</div>
+    </div>
+  </div>
+
+  <!-- Order Detail Modal -->
+  <div id="orderModal" class="modal-overlay" onclick="closeModalOutside(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="modalOrderId">Order Details</h3>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-section">
+          <h4>Order Status</h4>
+          <div class="timeline" id="modalTimeline"></div>
+        </div>
+        <div class="modal-section">
+          <h4>Items</h4>
+          <div class="modal-items" id="modalItems"></div>
+          <div class="modal-total">
+            <span>Total</span>
+            <span id="modalTotal">₹0</span>
+          </div>
+        </div>
+        <div class="modal-section">
+          <h4>Order Info</h4>
+          <p style="color:#888;font-size:0.9rem;" id="modalInfo"></p>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-track" id="modalTrackBtn" onclick="trackOrder()">📍 Track Live Status</button>
+        <button class="reorder-btn" onclick="reorderItems()">🔄 Reorder</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    let allOrders = [];
+    let selectedOrder = null;
+
+    const statuses = ['NEW', 'CONFIRMED', 'PREPARING', 'READY', 'DELIVERED'];
+    const statusLabels = {
+      'NEW': 'Order Received',
+      'CONFIRMED': 'Order Confirmed',
+      'PREPARING': 'Being Prepared',
+      'READY': 'Ready for Pickup',
+      'DELIVERED': 'Delivered'
+    };
+
+    if (!token) {
+      window.location.href = '/login';
+    }
+
+    async function loadProfile() {
+      try {
+        const res = await fetch('/auth/profile', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          document.getElementById('name').value = data.customer.name || '';
+          document.getElementById('phone').value = data.customer.phone || '';
+          document.getElementById('email').value = data.customer.email || '';
+          document.getElementById('address').value = data.customer.address || '';
+          document.getElementById('city').value = data.customer.city || '';
+          document.getElementById('points').textContent = data.customer.loyalty_points || 0;
+        } else {
+          localStorage.removeItem('token');
+          window.location.href = '/login';
+        }
+      } catch (err) {
+        console.error('Load profile error:', err);
+      }
+    }
+
+    async function saveProfile() {
+      const updates = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        address: document.getElementById('address').value,
+        city: document.getElementById('city').value
+      };
+
+      try {
+        const res = await fetch('/auth/profile', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify(updates)
+        });
+        const data = await res.json();
+
+        const msgDiv = document.getElementById('saveMessage');
+        if (data.success) {
+          msgDiv.innerHTML = '<div class="save-message success">Profile saved!</div>';
+          localStorage.setItem('customer', JSON.stringify(data.customer));
+        } else {
+          msgDiv.innerHTML = '<div class="save-message error">Error: ' + data.error + '</div>';
+        }
+        setTimeout(() => msgDiv.innerHTML = '', 3000);
+      } catch (err) {
+        alert('Connection error');
+      }
+    }
+
+    async function loadOrders() {
+      try {
+        const res = await fetch('/auth/orders', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          allOrders = data.orders;
+          renderOrders();
+        }
+      } catch (err) {
+        console.error('Load orders error:', err);
+      }
+    }
+
+    function renderOrders() {
+      const activeStatuses = ['NEW', 'CONFIRMED', 'PREPARING', 'READY'];
+      const activeOrders = allOrders.filter(o => activeStatuses.includes(o.status));
+      const pastOrders = allOrders.filter(o => !activeStatuses.includes(o.status));
+
+      // Active Orders
+      if (activeOrders.length > 0) {
+        document.getElementById('activeOrdersSection').style.display = 'block';
+        document.getElementById('activeCount').textContent = activeOrders.length;
+        document.getElementById('activeOrders').innerHTML = activeOrders.map(order => renderOrderCard(order, true)).join('');
+      } else {
+        document.getElementById('activeOrdersSection').style.display = 'none';
+      }
+
+      // Order History
+      if (pastOrders.length > 0) {
+        document.getElementById('orderHistory').innerHTML = pastOrders.map(order => renderOrderCard(order, false)).join('');
+      } else {
+        document.getElementById('orderHistory').innerHTML = '<div class="empty">No past orders</div>';
+      }
+    }
+
+    function renderOrderCard(order, isActive) {
+      return `
+        <div class="order ${isActive ? 'active' : ''}" onclick="openOrderModal('${order.order_id}')">
+          <div class="order-header">
+            <span class="order-id">${order.order_id}</span>
+            <span class="order-status status-${order.status}">${order.status}</span>
+          </div>
+          <div class="order-items">
+            ${order.items.map(i => i.qty + 'x ' + i.name).join(', ')}
+          </div>
+          <div class="order-footer">
+            <span>${formatDate(order.created_at)}</span>
+            <span class="order-total">₹${order.total_amount}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }
+
+    function toggleOrderHistory() {
+      const header = document.querySelector('.collapsible-header');
+      const content = document.getElementById('orderHistoryContent');
+      header.classList.toggle('open');
+      content.classList.toggle('open');
+    }
+
+    function openOrderModal(orderId) {
+      selectedOrder = allOrders.find(o => o.order_id === orderId);
+      if (!selectedOrder) return;
+
+      document.getElementById('modalOrderId').textContent = selectedOrder.order_id;
+
+      // Timeline
+      const currentIndex = statuses.indexOf(selectedOrder.status);
+      document.getElementById('modalTimeline').innerHTML = statuses.map((status, i) => {
+        let dotClass = 'timeline-dot';
+        let labelClass = 'timeline-label';
+
+        if (i < currentIndex) {
+          dotClass += ' done';
+          labelClass += ' done';
+        } else if (i === currentIndex) {
+          dotClass += ' current';
+          labelClass += ' current';
+        }
+
+        return `
+          <div class="timeline-step">
+            <div class="${dotClass}"></div>
+            <span class="${labelClass}">${statusLabels[status]}</span>
+          </div>
+        `;
+      }).join('');
+
+      // Items
+      document.getElementById('modalItems').innerHTML = selectedOrder.items.map(item => `
+        <div class="modal-item">
+          <span>${item.qty}x ${item.name}</span>
+          <span>₹${item.price * item.qty}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('modalTotal').textContent = '₹' + selectedOrder.total_amount;
+
+      // Info
+      document.getElementById('modalInfo').innerHTML = `
+        Table: ${selectedOrder.table_number || '-'}<br>
+        Ordered: ${formatDate(selectedOrder.created_at)}
+      `;
+
+      // Show/hide track button based on status
+      const trackBtn = document.getElementById('modalTrackBtn');
+      if (['NEW', 'CONFIRMED', 'PREPARING', 'READY'].includes(selectedOrder.status)) {
+        trackBtn.style.display = 'block';
+      } else {
+        trackBtn.style.display = 'none';
+      }
+
+      document.getElementById('orderModal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('orderModal').classList.remove('show');
+      selectedOrder = null;
+    }
+
+    function closeModalOutside(event) {
+      if (event.target === document.getElementById('orderModal')) {
+        closeModal();
+      }
+    }
+
+    function trackOrder() {
+      if (selectedOrder) {
+        window.location.href = '/track?id=' + selectedOrder.order_id;
+      }
+    }
+
+    function reorderItems() {
+      if (selectedOrder) {
+        // Store items in localStorage for the menu page to pick up
+        localStorage.setItem('reorderItems', JSON.stringify(selectedOrder.items));
+        window.location.href = '/menu?reorder=true';
+      }
+    }
+
+    function logout() {
+      fetch('/auth/logout', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      localStorage.removeItem('token');
+      localStorage.removeItem('customer');
+      window.location.href = '/login';
+    }
+
+    // Auto-refresh active orders every 30 seconds
+    setInterval(() => {
+      loadOrders();
+    }, 30000);
+
+    loadProfile();
+    loadOrders();
+  </script>
+</body>
+</html>

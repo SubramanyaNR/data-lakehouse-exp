@@ -1,0 +1,48 @@
+# Service (No selector — required for external endpoints)
+apiVersion: v1
+kind: Service
+metadata:
+  name: restaurant-app-external
+  namespace: monitoring
+  labels:
+    app: restaurant-app
+spec:
+  ports:
+    - name: http
+      port: 3001
+      targetPort: 3001
+---
+# Endpoints pointing to external IP
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: restaurant-app-external
+  namespace: monitoring
+  labels:
+    app: restaurant-app
+subsets:
+  - addresses:
+      - ip: 172.31.122.249
+    ports:
+      - name: http
+        port: 3001
+---
+# ServiceMonitor for Prometheus Operator
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: restaurant-app
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: restaurant-app
+  namespaceSelector:
+    matchNames:
+      - monitoring
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

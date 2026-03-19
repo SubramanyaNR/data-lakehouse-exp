@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Order - Guruprasad Udupi</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      color: #fff;
+      min-height: 100vh;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 450px;
+    }
+    h1 {
+      color: #ff6b00;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+    .search-box {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .search-box input {
+      flex: 1;
+      padding: 0.85rem;
+      border: 1px solid #444;
+      border-radius: 10px;
+      background: #222;
+      color: #fff;
+      font-size: 1rem;
+    }
+    .search-box input:focus { outline: none; border-color: #ff6b00; }
+    .search-box button {
+      padding: 0.85rem 1.25rem;
+      background: #ff6b00;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+    .search-box button:hover { background: #ff8533; }
+    .result {
+      background: #222;
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: none;
+    }
+    .result.show { display: block; }
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .order-id {
+      color: #ff6b00;
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+    .order-table {
+      background: #333;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+    .order-meta {
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    .timeline {
+      margin: 1.5rem 0;
+      padding-left: 1rem;
+      border-left: 2px solid #333;
+    }
+    .step {
+      position: relative;
+      padding: 0 0 1.5rem 1.5rem;
+    }
+    .step:last-child { padding-bottom: 0; }
+    .dot {
+      position: absolute;
+      left: -1.5rem;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #333;
+      border: 2px solid #333;
+    }
+    .dot.done {
+      background: #16a34a;
+      border-color: #16a34a;
+    }
+    .dot.current {
+      background: #ff6b00;
+      border-color: #ff6b00;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.4); }
+      50% { box-shadow: 0 0 0 10px rgba(255, 107, 0, 0); }
+    }
+    .step-label { color: #666; font-size: 0.95rem; }
+    .step-label.done { color: #16a34a; }
+    .step-label.current { color: #ff6b00; font-weight: bold; }
+    .error {
+      background: rgba(255,68,68,0.15);
+      border: 1px solid rgba(255,68,68,0.3);
+      color: #ff6b6b;
+      text-align: center;
+      padding: 1rem;
+      border-radius: 10px;
+      display: none;
+    }
+    .error.show { display: block; }
+    .links {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+    .links a {
+      color: #888;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .links a:hover { color: #ff6b00; }
+    .auto-refresh {
+      text-align: center;
+      color: #666;
+      font-size: 0.8rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📍 Track Your Order</h1>
+
+    <div class="search-box">
+      <input type="text" id="orderInput" placeholder="Enter Order ID (ORD-...)">
+      <button onclick="trackOrder()">Track</button>
+    </div>
+
+    <div id="error" class="error"></div>
+
+    <div id="result" class="result">
+      <div class="order-header">
+        <span class="order-id" id="orderId"></span>
+        <span class="order-table" id="orderTable"></span>
+      </div>
+      <div class="order-meta" id="orderMeta"></div>
+
+      <div class="timeline" id="timeline"></div>
+
+      <div class="auto-refresh">🔄 Auto-refreshing every 10 seconds</div>
+    </div>
+
+    <div class="links">
+      <a href="/menu">← Back to Menu</a>
+    </div>
+  </div>
+
+  <script>
+    const statuses = ['NEW', 'CONFIRMED', 'PREPARING', 'READY', 'DELIVERED'];
+    const statusLabels = {
+      'NEW': '📝 Order Received',
+      'CONFIRMED': '✅ Order Confirmed',
+      'PREPARING': '👨‍🍳 Being Prepared',
+      'READY': '🔔 Ready for Pickup',
+      'DELIVERED': '🎉 Delivered'
+    };
+
+    // Check URL for order ID
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderIdFromUrl = urlParams.get('id');
+    if (orderIdFromUrl) {
+      document.getElementById('orderInput').value = orderIdFromUrl;
+      setTimeout(trackOrder, 100);
+    }
+
+    async function trackOrder() {
+      const orderId = document.getElementById('orderInput').value.trim();
+
+      if (!orderId) {
+        showError('Please enter an order ID');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/order-status/${orderId}`);
+        const data = await res.json();
+
+        if (data.error || !data.order_id) {
+          showError('Order not found. Please check the order ID.');
+          return;
+        }
+
+        showResult(data);
+      } catch (err) {
+        showError('Unable to fetch order. Please try again.');
+      }
+    }
+
+    function showResult(order) {
+      document.getElementById('error').classList.remove('show');
+      document.getElementById('result').classList.add('show');
+
+      document.getElementById('orderId').textContent = order.order_id;
+      document.getElementById('orderTable').textContent = 'Table ' + (order.table_number || '-');
+      document.getElementById('orderMeta').textContent =
+        'Placed: ' + new Date(order.created_at).toLocaleString() +
+        (order.customer_name ? ' • ' + order.customer_name : '');
+
+      const currentIndex = statuses.indexOf(order.status);
+
+      document.getElementById('timeline').innerHTML = statuses.map((status, i) => {
+        let dotClass = 'dot';
+        let labelClass = 'step-label';
+
+        if (i < currentIndex) {
+          dotClass += ' done';
+          labelClass += ' done';
+        } else if (i === currentIndex) {
+          dotClass += ' current';
+          labelClass += ' current';
+        }
+
+        return `
+          <div class="step">
+            <div class="${dotClass}"></div>
+            <span class="${labelClass}">${statusLabels[status]}</span>
+          </div>
+        `;
+      }).join('');
+
+      // Update URL without reload
+      const newUrl = window.location.pathname + '?id=' + order.order_id;
+      history.replaceState(null, '', newUrl);
+    }
+
+    function showError(msg) {
+      document.getElementById('result').classList.remove('show');
+      const errorDiv = document.getElementById('error');
+      errorDiv.textContent = msg;
+      errorDiv.classList.add('show');
+    }
+
+    // Auto-refresh every 10 seconds if showing result
+    setInterval(() => {
+      if (document.getElementById('result').classList.contains('show')) {
+        trackOrder();
+      }
+    }, 10000);
+
+    // Enter key support
+    document.getElementById('orderInput').addEventListener('keypress', e => {
+      if (e.key === 'Enter') trackOrder();
+    });
+  </script>
+</body>
+</html>
