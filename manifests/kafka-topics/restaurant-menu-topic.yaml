@@ -1,0 +1,15 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: restaurant.menu
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  partitions: 1
+  replicas: 1
+  config:
+    retention.ms: "-1"             # Retain forever (menu is reference data)
+    cleanup.policy: compact        # Keep latest record per item id key
+    min.cleanable.dirty.ratio: "0.1"
+    segment.bytes: "104857600"

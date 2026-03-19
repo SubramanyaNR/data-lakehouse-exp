@@ -1,0 +1,15 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: restaurant.orders
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  partitions: 3
+  replicas: 1
+  config:
+    retention.ms: "604800000"      # 7 days
+    cleanup.policy: compact        # Keep latest event per key (orderId)
+    min.cleanable.dirty.ratio: "0.1"
+    segment.bytes: "104857600"     # 100 MB
