@@ -343,18 +343,14 @@ async function main() {
     const stats = {};
 
     // Count rows before migration for stats
-    for (const table of ["menu_categories", "menu_items", "customers", "orders"]) {
-      try {
-        const { rows } = await pool.query(`SELECT COUNT(*) FROM ${table}`);
-        stats[table] = parseInt(rows[0].count);
-      } catch {
-        stats[table] = 0;
-      }
+    for (const table of ["customers", "orders"]) {
+      const { rows } = await pool.query(`SELECT COUNT(*) FROM ${table}`);
+      stats[table] = parseInt(rows[0].count);
     }
 
     console.log("\n📊 Rows to migrate:", stats);
+    console.log("  ℹ️  Skipping restaurant.menu — run seed-menu-topic.js separately when ready\n");
 
-    await migrateMenu();
     await migrateCustomers();
     await migrateOrders();
     await publishMigrationComplete(stats);
