@@ -65,7 +65,7 @@ async function migrateMenuCategories() {
 
   if (rows.length === 0) {
     console.log("  (no rows found — skipping)");
-    return;
+    return 0;
   }
 
   const messages = rows.map(cat => ({
@@ -79,6 +79,7 @@ async function migrateMenuCategories() {
 
   await sendBatch("restaurant.menu", messages);
   console.log(`  ✅ ${rows.length} categories migrated`);
+  return rows.length;
 }
 
 async function migrateMenuItems() {
@@ -89,7 +90,7 @@ async function migrateMenuItems() {
 
   if (rows.length === 0) {
     console.log("  (no rows found — skipping)");
-    return;
+    return 0;
   }
 
   const messages = rows.map(item => ({
@@ -103,6 +104,75 @@ async function migrateMenuItems() {
 
   await sendBatch("restaurant.menu", messages);
   console.log(`  ✅ ${rows.length} menu items migrated`);
+  return rows.length;
+}
+
+async function migrateMenuFromOrderItems() {
+  console.log("\n📦 Deriving menu from order_items (no menu_categories table)...");
+
+  // Extract distinct items — use MIN(price) in case of minor price drift across orders
+  const { rows } = await pool.query(`
+    SELECT item_name, MIN(price) AS price
+    FROM order_items
+    GROUP BY item_name
+    ORDER BY item_name
+  `);
+
+  if (rows.length === 0) {
+    console.log("  (no order_items found — skipping)");
+    return;
+  }
+
+  const now = new Date().toISOString();
+
+  // Publish a single synthetic category that wraps all items
+  await sendBatch("restaurant.menu", [{
+    key: "cat-derived-1",
+    value: JSON.stringify({
+      event: "MENU_CATEGORY_UPSERTED",
+      data: { id: "cat-derived-1", name: "Our Menu", display_order: 1 },
+      timestamp: now
+    })
+  }]);
+
+  // Publish one MENU_ITEM_UPSERTED per distinct item
+  const itemMessages = rows.map((item, idx) => ({
+    key: `item-derived-${idx + 1}`,
+    value: JSON.stringify({
+      event: "MENU_ITEM_UPSERTED",
+      data: {
+        id: `item-derived-${idx + 1}`,
+        category_id: "cat-derived-1",
+        name: item.item_name,
+        price: parseFloat(item.price),
+        is_available: true
+      },
+      timestamp: now
+    })
+  }));
+
+  await sendBatch("restaurant.menu", itemMessages);
+  console.log(`  ✅ ${rows.length} menu items derived from order history and published to restaurant.menu`);
+}
+
+async function migrateMenu() {
+  // Try the normalised menu tables first; fall back to deriving from order_items
+  try {
+    const catCount  = await migrateMenuCategories();
+    const itemCount = await migrateMenuItems();
+    if (catCount === 0 && itemCount === 0) {
+      console.log("  ⚠️  menu_categories and menu_items are empty — falling back to order_items derivation");
+      await migrateMenuFromOrderItems();
+    }
+  } catch (err) {
+    if (err.code === "42P01") {
+      // 42P01 = undefined_table — expected when menu tables were never created
+      console.log("  ⚠️  menu_categories/menu_items tables not found — deriving menu from order_items");
+      await migrateMenuFromOrderItems();
+    } else {
+      throw err;
+    }
+  }
 }
 
 async function migrateCustomers() {
@@ -284,8 +354,7 @@ async function main() {
 
     console.log("\n📊 Rows to migrate:", stats);
 
-    await migrateMenuCategories();
-    await migrateMenuItems();
+    await migrateMenu();
     await migrateCustomers();
     await migrateOrders();
     await publishMigrationComplete(stats);
