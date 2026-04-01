@@ -1,7 +1,8 @@
 "use strict";
 
 /**
- * db/kafka.js — HTTP proxy to Python Kafka producer & consumer services.
+ * db/kafka.js — Spawns Python Kafka producer & consumer services, then proxies
+ * HTTP calls to them.
  *
  * Writes  → http://localhost:PRODUCER_PORT  (kafka/producer.py)
  * Reads   → http://localhost:CONSUMER_PORT  (kafka/consumer.py)
@@ -9,13 +10,40 @@
  * Exports the same interface as db/postgres.js so server.js needs no changes.
  */
 
-const http  = require("http");
+const http   = require("http");
 const bcrypt = require("bcrypt");
+const { spawn } = require("child_process");
+const path   = require("path");
 
-const PRODUCER = `http://localhost:${process.env.PRODUCER_PORT || 8001}`;
-const CONSUMER = `http://localhost:${process.env.CONSUMER_PORT || 8002}`;
+const PRODUCER_PORT = process.env.PRODUCER_PORT || 8001;
+const CONSUMER_PORT = process.env.CONSUMER_PORT || 8002;
+const PRODUCER = `http://localhost:${PRODUCER_PORT}`;
+const CONSUMER = `http://localhost:${CONSUMER_PORT}`;
+const KAFKA_DIR = path.join(__dirname, "../kafka");
 
-let isConnected = false;
+let isConnected  = false;
+let producerProc = null;
+let consumerProc = null;
+
+// ── Spawn helpers ─────────────────────────────────────────────────────────────
+
+function spawnService(script, port) {
+  const proc = spawn(
+    "uvicorn",
+    [`${script}:app`, "--port", String(port), "--log-level", "warning"],
+    { cwd: KAFKA_DIR, env: { ...process.env }, stdio: ["ignore", "pipe", "pipe"] }
+  );
+  proc.stdout.on("data", d => process.stdout.write(`[${script}] ${d}`));
+  proc.stderr.on("data", d => process.stderr.write(`[${script}] ${d}`));
+  proc.on("exit", code => { if (code !== null) console.log(`[${script}] exited (code ${code})`); });
+  return proc;
+}
+
+// Kill child processes whenever Node exits (crash or Ctrl+C)
+process.on("exit", () => {
+  if (producerProc) producerProc.kill();
+  if (consumerProc) consumerProc.kill();
+});
 
 // ── HTTP helper ───────────────────────────────────────────────────────────────
 
@@ -54,8 +82,12 @@ const put  = (base, path, body)   => request(base, "PUT",  path, body);
 // ── Connection lifecycle ──────────────────────────────────────────────────────
 
 async function connect() {
-  console.log("⏳ Waiting for Python Kafka producer and consumer services...");
-  for (let i = 0; i < 30; i++) {
+  console.log("⏳ Starting Python Kafka producer and consumer services...");
+  producerProc = spawnService("producer", PRODUCER_PORT);
+  consumerProc = spawnService("consumer", CONSUMER_PORT);
+
+  // Poll until both services are up and consumer has finished replaying topics
+  for (let i = 0; i < 60; i++) {
     try {
       const [p, c] = await Promise.all([
         get(PRODUCER, "/health"),
@@ -74,8 +106,10 @@ async function connect() {
 }
 
 async function disconnect() {
+  if (producerProc) { producerProc.kill(); producerProc = null; }
+  if (consumerProc) { consumerProc.kill(); consumerProc = null; }
   isConnected = false;
-  console.log("Kafka proxy disconnected");
+  console.log("Kafka services stopped");
 }
 
 function isReady() { return isConnected; }
