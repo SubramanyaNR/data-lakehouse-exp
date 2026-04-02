@@ -29,8 +29,8 @@ let consumerProc = null;
 
 function spawnService(script, port) {
   const proc = spawn(
-    "uvicorn",
-    [`${script}:app`, "--port", String(port), "--log-level", "warning"],
+    "python3",
+    ["-m", "uvicorn", `${script}:app`, "--port", String(port), "--log-level", "warning"],
     { cwd: KAFKA_DIR, env: { ...process.env }, stdio: ["ignore", "pipe", "pipe"] }
   );
   proc.stdout.on("data", d => process.stdout.write(`[${script}] ${d}`));
@@ -65,6 +65,7 @@ function request(base, method, path, body) {
       res.on("data", chunk => (data += chunk));
       res.on("end", () => {
         if (res.statusCode === 404) return resolve(null);
+        if (res.statusCode >= 400) return reject(new Error(`HTTP ${res.statusCode} from ${method} ${path}: ${data}`));
         try { resolve(JSON.parse(data)); } catch { resolve(null); }
       });
     });

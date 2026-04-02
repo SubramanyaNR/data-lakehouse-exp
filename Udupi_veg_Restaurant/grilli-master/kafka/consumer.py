@@ -103,7 +103,8 @@ def apply_customer_event(event: str, data: dict):
         phone = data.get("phone")
         cid   = str(data.get("id", ""))
         existing = state["customers"].get(phone, {})
-        merged   = {**existing, **data}
+        data_clean = {k: v for k, v in data.items() if v is not None}
+        merged   = {**existing, **data_clean}
         if phone:
             state["customers"][phone]         = merged
         if cid:
@@ -142,8 +143,10 @@ def run_consumer():
     })
     c.subscribe(TOPICS)
 
-    # Track which topics have been fully caught up (reached EOF)
-    eofs_seen = set()
+    # After this many consecutive empty polls (seconds of silence) we consider
+    # the initial replay complete and mark the service ready.
+    READY_AFTER_EMPTY_POLLS = 3
+    consecutive_empty = 0
     print(f"[consumer] Subscribed to {TOPICS} — replaying from beginning...")
 
     try:
@@ -151,25 +154,23 @@ def run_consumer():
             msg = c.poll(timeout=1.0)
 
             if msg is None:
-                # No new messages — check if we have seen EOF on all topic-partitions
-                if not _ready and len(eofs_seen) >= len(TOPICS):
+                consecutive_empty += 1
+                if not _ready and consecutive_empty >= READY_AFTER_EMPTY_POLLS:
                     _ready = True
                     print("[consumer] Initial replay complete — ready to serve reads")
                 continue
 
+            # Reset quiet counter on any real message
+            consecutive_empty = 0
+
             if msg.error():
-                if msg.error().code() == KafkaError._PARTITION_EOF:
-                    eofs_seen.add(msg.topic())
-                    if not _ready and len(eofs_seen) >= len(TOPICS):
-                        _ready = True
-                        print("[consumer] Initial replay complete — ready to serve reads")
-                else:
-                    print(f"[consumer] Error: {msg.error()}")
+                print(f"[consumer] Error: {msg.error()}")
                 continue
 
             try:
                 payload = json.loads(msg.value().decode("utf-8"))
-            except Exception:
+            except Exception as e:
+                print(f"[consumer] Failed to decode message on {msg.topic()}: {e}")
                 continue
 
             event = payload.get("event", "")
