@@ -9,7 +9,7 @@ data:
   strimzi-kafka.json: |
     {
       "annotations": { "list": [] },
-      "description": "Strimzi Kafka — broker throughput, latency, consumer lag, connections, JVM",
+      "description": "Strimzi Kafka — full broker metrics: throughput, latency, lag, disk, replication, ISR, request handling, purgatory, JVM",
       "editable": true,
       "graphTooltip": 1,
       "id": null,
@@ -22,7 +22,7 @@ data:
       "timezone": "browser",
       "title": "Strimzi Kafka",
       "uid": "strimzi-kafka",
-      "version": 2,
+      "version": 3,
       "templating": {
         "list": [
           {
@@ -79,371 +79,343 @@ data:
       },
       "panels": [
 
-        {
-          "id": 1,
-          "type": "stat",
-          "title": "Brokers Online",
+        { "id": 1, "type": "stat", "title": "Brokers Online",
           "description": "Number of Kafka broker pods currently scraping metrics",
           "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "targets": [{
-            "expr": "count(kafka_server_replicamanager_leadercount{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})",
-            "legendFormat": "Brokers",
-            "refId": "A"
-          }],
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none", "textMode": "auto" },
-          "fieldConfig": {
-            "defaults": {
-              "color": { "mode": "thresholds" },
-              "thresholds": { "mode": "absolute", "steps": [
-                { "color": "red", "value": null },
-                { "color": "orange", "value": 1 },
-                { "color": "green", "value": 1 }
-              ]}
-            }
-          }
-        },
+          "targets": [{ "expr": "count(kafka_server_replicamanager_leadercount{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})", "legendFormat": "Brokers", "refId": "A" }],
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none" },
+          "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] } } } },
 
-        {
-          "id": 2,
-          "type": "stat",
-          "title": "Active Controllers",
-          "description": "Should always be 1",
+        { "id": 2, "type": "stat", "title": "Active Controllers",
+          "description": "Should always be exactly 1",
           "gridPos": { "h": 4, "w": 4, "x": 4, "y": 0 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "targets": [{
-            "expr": "sum(kafka_controller_kafkacontroller_activecontrollercount{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})",
-            "legendFormat": "Controllers",
-            "refId": "A"
-          }],
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none", "textMode": "auto" },
-          "fieldConfig": {
-            "defaults": {
-              "color": { "mode": "thresholds" },
-              "thresholds": { "mode": "absolute", "steps": [
-                { "color": "red", "value": null },
-                { "color": "green", "value": 1 },
-                { "color": "red", "value": 2 }
-              ]}
-            }
-          }
-        },
+          "targets": [{ "expr": "sum(kafka_controller_kafkacontroller_activecontrollercount{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})", "legendFormat": "Controllers", "refId": "A" }],
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none" },
+          "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }, { "color": "red", "value": 2 }] } } } },
 
-        {
-          "id": 3,
-          "type": "stat",
-          "title": "Under-Replicated Partitions",
-          "description": "Should be 0 in a healthy cluster",
+        { "id": 3, "type": "stat", "title": "Under-Replicated Partitions",
+          "description": "Should be 0 — any value indicates replication lag",
           "gridPos": { "h": 4, "w": 4, "x": 8, "y": 0 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "targets": [{
-            "expr": "sum(kafka_server_replicamanager_underreplicatedpartitions{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})",
-            "legendFormat": "Under-replicated",
-            "refId": "A"
-          }],
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none", "textMode": "auto" },
-          "fieldConfig": {
-            "defaults": {
-              "color": { "mode": "thresholds" },
-              "thresholds": { "mode": "absolute", "steps": [
-                { "color": "green", "value": null },
-                { "color": "orange", "value": 1 },
-                { "color": "red", "value": 10 }
-              ]}
-            }
-          }
-        },
+          "targets": [{ "expr": "sum(kafka_server_replicamanager_underreplicatedpartitions{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})", "legendFormat": "Under-replicated", "refId": "A" }],
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none" },
+          "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 1 }, { "color": "red", "value": 10 }] } } } },
 
-        {
-          "id": 4,
-          "type": "stat",
-          "title": "Offline Partitions",
-          "description": "Should always be 0",
+        { "id": 4, "type": "stat", "title": "Offline Partitions",
+          "description": "Should always be 0 — data unavailability indicator",
           "gridPos": { "h": 4, "w": 4, "x": 12, "y": 0 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "targets": [{
-            "expr": "sum(kafka_controller_kafkacontroller_offlinepartitionscount{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})",
-            "legendFormat": "Offline",
-            "refId": "A"
-          }],
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none", "textMode": "auto" },
-          "fieldConfig": {
-            "defaults": {
-              "color": { "mode": "thresholds" },
-              "thresholds": { "mode": "absolute", "steps": [
-                { "color": "green", "value": null },
-                { "color": "red", "value": 1 }
-              ]}
-            }
-          }
-        },
+          "targets": [{ "expr": "sum(kafka_controller_kafkacontroller_offlinepartitionscount{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})", "legendFormat": "Offline", "refId": "A" }],
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none" },
+          "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }] } } } },
 
-        {
-          "id": 5,
-          "type": "stat",
-          "title": "Total Partitions",
+        { "id": 5, "type": "stat", "title": "Total Partitions",
           "gridPos": { "h": 4, "w": 4, "x": 16, "y": 0 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "targets": [{
-            "expr": "sum(kafka_server_replicamanager_partitioncount{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})",
-            "legendFormat": "Partitions",
-            "refId": "A"
-          }],
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none", "textMode": "auto" },
-          "fieldConfig": {
-            "defaults": { "color": { "mode": "fixed", "fixedColor": "blue" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "blue", "value": null }] } }
-          }
-        },
+          "targets": [{ "expr": "sum(kafka_server_replicamanager_partitioncount{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})", "legendFormat": "Partitions", "refId": "A" }],
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+          "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "blue" } } } },
 
-        {
-          "id": 6,
-          "type": "stat",
-          "title": "Active Connections",
+        { "id": 6, "type": "stat", "title": "Active Connections",
           "gridPos": { "h": 4, "w": 4, "x": 20, "y": 0 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "targets": [{
-            "expr": "sum(kafka_server_socketservermetrics_connection_count{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})",
-            "legendFormat": "Connections",
-            "refId": "A"
-          }],
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "area", "textMode": "auto" },
-          "fieldConfig": {
-            "defaults": { "color": { "mode": "fixed", "fixedColor": "purple" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "purple", "value": null }] } }
-          }
-        },
+          "targets": [{ "expr": "sum(kafka_server_socketservermetrics_connection_count{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})", "legendFormat": "Connections", "refId": "A" }],
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "area" },
+          "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "purple" } } } },
 
-        {
-          "id": 7,
-          "type": "row",
-          "title": "Throughput",
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 4 },
-          "collapsed": false
-        },
+        { "id": 22, "type": "stat", "title": "ISR Shrinks / sec",
+          "description": "In-Sync Replica shrink rate. Non-zero = replicas falling behind. Should be 0.",
+          "gridPos": { "h": 4, "w": 4, "x": 0, "y": 4 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "sum(kafka_server_replicamanager_isrshrinkspersec{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})", "legendFormat": "ISR Shrinks/s", "refId": "A" }],
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
+          "fieldConfig": { "defaults": { "decimals": 2, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 0.01 }, { "color": "red", "value": 1 }] } } } },
 
-        {
-          "id": 8,
-          "type": "timeseries",
-          "title": "Messages In / sec (by topic)",
+        { "id": 23, "type": "stat", "title": "ISR Expands / sec",
+          "description": "In-Sync Replica expand rate. Expanding = replicas catching up after a shrink.",
+          "gridPos": { "h": 4, "w": 4, "x": 4, "y": 4 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "sum(kafka_server_replicamanager_isrexpandspersec{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})", "legendFormat": "ISR Expands/s", "refId": "A" }],
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "area" },
+          "fieldConfig": { "defaults": { "decimals": 2, "color": { "mode": "fixed", "fixedColor": "blue" } } } },
+
+        { "id": 24, "type": "stat", "title": "Unclean Leader Elections",
+          "description": "Should always be 0. Non-zero means data loss risk — a non-ISR replica was elected leader.",
+          "gridPos": { "h": 4, "w": 4, "x": 8, "y": 4 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "sum(kafka_controller_kafkacontroller_uncleanleaderelectionspersec{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})", "legendFormat": "Unclean Elections", "refId": "A" }],
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none" },
+          "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 0.01 }] } } } },
+
+        { "id": 25, "type": "stat", "title": "Req Handler Idle %",
+          "description": "Request handler thread pool idle %. Low = broker CPU-bound on request processing.",
+          "gridPos": { "h": 4, "w": 4, "x": 12, "y": 4 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "avg(kafka_server_kafkarequesthandlerpool_requesthandleravgidlepercent{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})", "legendFormat": "Handler Idle %", "refId": "A" }],
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
+          "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 1, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "orange", "value": 0.2 }, { "color": "green", "value": 0.5 }] } } } },
+
+        { "id": 26, "type": "stat", "title": "Failed Produce Req / sec",
+          "description": "Rate of failed produce requests. Non-zero = producers getting errors.",
+          "gridPos": { "h": 4, "w": 4, "x": 16, "y": 4 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "sum(rate(kafka_server_brokertopicmetrics_failedproducerequests_total{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"}[1m]))", "legendFormat": "Failed Produce/s", "refId": "A" }],
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
+          "fieldConfig": { "defaults": { "decimals": 2, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 0.01 }, { "color": "red", "value": 1 }] } } } },
+
+        { "id": 27, "type": "stat", "title": "Leader Elections / sec",
+          "description": "Rate of leader elections. Spikes indicate broker instability or rolling restarts.",
+          "gridPos": { "h": 4, "w": 4, "x": 20, "y": 4 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "sum(rate(kafka_controller_kafkacontroller_leaderelectionrateanddurationms_count{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"}[5m]))", "legendFormat": "Elections/s", "refId": "A" }],
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
+          "fieldConfig": { "defaults": { "decimals": 3, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 0.01 }, { "color": "red", "value": 0.5 }] } } } },
+
+        { "id": 7, "type": "row", "title": "Throughput", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 8 }, "collapsed": false },
+
+        { "id": 8, "type": "timeseries", "title": "Messages In / sec (by topic)",
           "description": "Rate of messages produced per second, broken down by topic",
-          "gridPos": { "h": 8, "w": 8, "x": 0, "y": 5 },
+          "gridPos": { "h": 8, "w": 8, "x": 0, "y": 9 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "targets": [{
-            "expr": "sum(rate(kafka_server_brokertopicmetrics_messagesin_total{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",topic=~\"$kafka_topic\"}[1m])) by (topic)",
-            "legendFormat": "{{topic}}",
-            "refId": "A"
-          }],
+          "targets": [{ "expr": "sum(rate(kafka_server_brokertopicmetrics_messagesin_total{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",topic=~\"$kafka_topic\"}[1m])) by (topic)", "legendFormat": "{{topic}}", "refId": "A" }],
           "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
-          "fieldConfig": { "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 10 } } }
-        },
+          "fieldConfig": { "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 10 } } } },
 
-        {
-          "id": 9,
-          "type": "timeseries",
-          "title": "Bytes In / sec",
-          "description": "Total bytes ingested per second across all topics",
-          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 5 },
+        { "id": 9, "type": "timeseries", "title": "Bytes In / sec",
+          "description": "Total bytes ingested per second across all selected topics",
+          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 9 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "targets": [{
-            "expr": "sum(rate(kafka_server_brokertopicmetrics_bytesin_total{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",topic=~\"$kafka_topic\"}[1m])) by (pod)",
-            "legendFormat": "{{pod}}",
-            "refId": "A"
-          }],
+          "targets": [{ "expr": "sum(rate(kafka_server_brokertopicmetrics_bytesin_total{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",topic=~\"$kafka_topic\"}[1m])) by (topic)", "legendFormat": "{{topic}}", "refId": "A" }],
           "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
-          "fieldConfig": { "defaults": { "unit": "Bps", "custom": { "lineWidth": 2, "fillOpacity": 10 } } }
-        },
+          "fieldConfig": { "defaults": { "unit": "Bps", "custom": { "lineWidth": 2, "fillOpacity": 10 } } } },
 
-        {
-          "id": 10,
-          "type": "timeseries",
-          "title": "Bytes Out / sec",
+        { "id": 10, "type": "timeseries", "title": "Bytes Out / sec (to consumers)",
           "description": "Total bytes sent to consumers per second",
-          "gridPos": { "h": 8, "w": 8, "x": 16, "y": 5 },
+          "gridPos": { "h": 8, "w": 8, "x": 16, "y": 9 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "targets": [{
-            "expr": "sum(rate(kafka_server_brokertopicmetrics_bytesout_total{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",topic=~\"$kafka_topic\"}[1m])) by (pod)",
-            "legendFormat": "{{pod}}",
-            "refId": "A"
-          }],
+          "targets": [{ "expr": "sum(rate(kafka_server_brokertopicmetrics_bytesout_total{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",topic=~\"$kafka_topic\"}[1m])) by (topic)", "legendFormat": "{{topic}}", "refId": "A" }],
           "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
-          "fieldConfig": { "defaults": { "unit": "Bps", "custom": { "lineWidth": 2, "fillOpacity": 10 } } }
-        },
+          "fieldConfig": { "defaults": { "unit": "Bps", "custom": { "lineWidth": 2, "fillOpacity": 10 } } } },
 
-        {
-          "id": 11,
-          "type": "row",
-          "title": "Request Latency",
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 13 },
-          "collapsed": false
-        },
+        { "id": 11, "type": "row", "title": "Request Latency", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 17 }, "collapsed": false },
 
-        {
-          "id": 12,
-          "type": "timeseries",
-          "title": "Produce Request Latency (ms)",
+        { "id": 12, "type": "timeseries", "title": "Produce Request Latency (ms)",
           "description": "End-to-end latency for Produce requests at p50 / p95 / p99",
-          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 14 },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 18 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "targets": [
-            {
-              "expr": "kafka_network_requestmetrics_totaltimems{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",request=\"Produce\",quantile=\"0.5\"}",
-              "legendFormat": "p50",
-              "refId": "A"
-            },
-            {
-              "expr": "kafka_network_requestmetrics_totaltimems{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",request=\"Produce\",quantile=\"0.95\"}",
-              "legendFormat": "p95",
-              "refId": "B"
-            },
-            {
-              "expr": "kafka_network_requestmetrics_totaltimems{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",request=\"Produce\",quantile=\"0.99\"}",
-              "legendFormat": "p99",
-              "refId": "C"
-            }
+            { "expr": "kafka_network_requestmetrics_totaltimems{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",request=\"Produce\",quantile=\"0.5\"}", "legendFormat": "p50", "refId": "A" },
+            { "expr": "kafka_network_requestmetrics_totaltimems{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",request=\"Produce\",quantile=\"0.95\"}", "legendFormat": "p95", "refId": "B" },
+            { "expr": "kafka_network_requestmetrics_totaltimems{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",request=\"Produce\",quantile=\"0.99\"}", "legendFormat": "p99", "refId": "C" }
           ],
           "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
-          "fieldConfig": { "defaults": { "unit": "ms", "custom": { "lineWidth": 2, "fillOpacity": 5 } } }
-        },
+          "fieldConfig": { "defaults": { "unit": "ms", "custom": { "lineWidth": 2, "fillOpacity": 5 } } } },
 
-        {
-          "id": 13,
-          "type": "timeseries",
-          "title": "Fetch Consumer Latency (ms)",
+        { "id": 13, "type": "timeseries", "title": "Fetch Consumer Latency (ms)",
           "description": "End-to-end latency for FetchConsumer requests at p50 / p95 / p99",
-          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 14 },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 18 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "targets": [
-            {
-              "expr": "kafka_network_requestmetrics_totaltimems{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",request=\"FetchConsumer\",quantile=\"0.5\"}",
-              "legendFormat": "p50",
-              "refId": "A"
-            },
-            {
-              "expr": "kafka_network_requestmetrics_totaltimems{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",request=\"FetchConsumer\",quantile=\"0.95\"}",
-              "legendFormat": "p95",
-              "refId": "B"
-            },
-            {
-              "expr": "kafka_network_requestmetrics_totaltimems{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",request=\"FetchConsumer\",quantile=\"0.99\"}",
-              "legendFormat": "p99",
-              "refId": "C"
-            }
+            { "expr": "kafka_network_requestmetrics_totaltimems{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",request=\"FetchConsumer\",quantile=\"0.5\"}", "legendFormat": "p50", "refId": "A" },
+            { "expr": "kafka_network_requestmetrics_totaltimems{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",request=\"FetchConsumer\",quantile=\"0.95\"}", "legendFormat": "p95", "refId": "B" },
+            { "expr": "kafka_network_requestmetrics_totaltimems{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",request=\"FetchConsumer\",quantile=\"0.99\"}", "legendFormat": "p99", "refId": "C" }
           ],
           "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
-          "fieldConfig": { "defaults": { "unit": "ms", "custom": { "lineWidth": 2, "fillOpacity": 5 } } }
-        },
+          "fieldConfig": { "defaults": { "unit": "ms", "custom": { "lineWidth": 2, "fillOpacity": 5 } } } },
 
-        {
-          "id": 14,
-          "type": "row",
-          "title": "Consumer Lag",
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 22 },
-          "collapsed": false
-        },
+        { "id": 14, "type": "row", "title": "Consumer Lag", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 26 }, "collapsed": false },
 
-        {
-          "id": 15,
-          "type": "timeseries",
-          "title": "Consumer Group Lag (by group / topic)",
-          "description": "Number of messages the consumer group is behind the latest offset. Sourced from kafka-exporter.",
-          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 23 },
+        { "id": 15, "type": "timeseries", "title": "Consumer Group Lag (by group / topic)",
+          "description": "Messages the consumer group is behind latest offset. Sourced from kafka-exporter.",
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 27 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "targets": [{
-            "expr": "sum(kafka_consumergroup_lag{topic=~\"$kafka_topic\"}) by (consumergroup, topic)",
-            "legendFormat": "{{consumergroup}} / {{topic}}",
-            "refId": "A"
-          }],
+          "targets": [{ "expr": "sum(kafka_consumergroup_lag{topic=~\"$kafka_topic\"}) by (consumergroup, topic)", "legendFormat": "{{consumergroup}} / {{topic}}", "refId": "A" }],
           "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "table", "placement": "right", "calcs": ["lastNotNull", "max"] } },
-          "fieldConfig": { "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 15 }, "min": 0 } }
-        },
+          "fieldConfig": { "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 15 }, "min": 0 } } },
 
-        {
-          "id": 16,
-          "type": "row",
-          "title": "Connections & Network",
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 31 },
-          "collapsed": false
-        },
+        { "id": 16, "type": "row", "title": "Connections & Network", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 35 }, "collapsed": false },
 
-        {
-          "id": 17,
-          "type": "timeseries",
-          "title": "Active Connections (by broker)",
+        { "id": 17, "type": "timeseries", "title": "Active Connections (by broker)",
           "description": "Number of open TCP connections to each broker",
-          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 36 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "targets": [{
-            "expr": "kafka_server_socketservermetrics_connection_count{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"}",
-            "legendFormat": "{{pod}}",
-            "refId": "A"
-          }],
+          "targets": [{ "expr": "kafka_server_socketservermetrics_connection_count{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"}", "legendFormat": "{{pod}}", "refId": "A" }],
           "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
-          "fieldConfig": { "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 10 }, "min": 0 } }
-        },
+          "fieldConfig": { "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 10 }, "min": 0 } } },
 
-        {
-          "id": 18,
-          "type": "timeseries",
-          "title": "Network Processor Avg Idle %",
+        { "id": 18, "type": "timeseries", "title": "Network Processor Avg Idle %",
           "description": "How idle the network processors are. Lower = busier broker.",
-          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 36 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "targets": [{
-            "expr": "kafka_network_socketserver_networkprocessoravgidlepercent{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"}",
-            "legendFormat": "{{pod}}",
-            "refId": "A"
-          }],
+          "targets": [{ "expr": "kafka_network_socketserver_networkprocessoravgidlepercent{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"}", "legendFormat": "{{pod}}", "refId": "A" }],
+          "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
+          "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 1, "custom": { "lineWidth": 2, "fillOpacity": 10 }, "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "orange", "value": 0.3 }, { "color": "green", "value": 0.5 }] } } } },
+
+        { "id": 28, "type": "row", "title": "Disk & Log", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 44 }, "collapsed": false },
+
+        { "id": 29, "type": "timeseries", "title": "Log Size on Disk (by topic)",
+          "description": "Total bytes stored on disk per topic across all partitions. Reflects retention + compaction.",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 45 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "sum(kafka_log_log_size{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",topic=~\"$kafka_topic\"}) by (topic)", "legendFormat": "{{topic}}", "refId": "A" }],
+          "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
+          "fieldConfig": { "defaults": { "unit": "bytes", "custom": { "lineWidth": 2, "fillOpacity": 15 }, "min": 0 } } },
+
+        { "id": 30, "type": "timeseries", "title": "Log Flush Latency p99 (ms)",
+          "description": "Time taken to flush log segments to disk at p99. High values = disk I/O pressure.",
+          "gridPos": { "h": 8, "w": 6, "x": 12, "y": 45 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [
+            { "expr": "kafka_log_logmanager_logflushrateanddurationms{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",quantile=\"0.5\"}", "legendFormat": "p50", "refId": "A" },
+            { "expr": "kafka_log_logmanager_logflushrateanddurationms{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",quantile=\"0.99\"}", "legendFormat": "p99", "refId": "B" }
+          ],
+          "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
+          "fieldConfig": { "defaults": { "unit": "ms", "custom": { "lineWidth": 2, "fillOpacity": 10 }, "min": 0 } } },
+
+        { "id": 31, "type": "timeseries", "title": "Log Segments per Topic",
+          "description": "Number of active log segments per topic. More segments = more compaction work pending.",
+          "gridPos": { "h": 8, "w": 6, "x": 18, "y": 45 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "sum(kafka_log_log_numlogsegments{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",topic=~\"$kafka_topic\"}) by (topic)", "legendFormat": "{{topic}}", "refId": "A" }],
+          "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
+          "fieldConfig": { "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 10 }, "min": 0 } } },
+
+        { "id": 32, "type": "row", "title": "Replication & ISR Health", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 53 }, "collapsed": false },
+
+        { "id": 33, "type": "timeseries", "title": "ISR Shrink / Expand Rate",
+          "description": "Shrinks = replicas falling out of sync. Expands = replicas rejoining ISR. Sustained shrinks without expands = problem.",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 54 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [
+            { "expr": "sum(kafka_server_replicamanager_isrshrinkspersec{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})", "legendFormat": "ISR Shrinks/s", "refId": "A" },
+            { "expr": "sum(kafka_server_replicamanager_isrexpandspersec{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})", "legendFormat": "ISR Expands/s", "refId": "B" }
+          ],
+          "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
+          "fieldConfig": { "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 10 }, "min": 0 } } },
+
+        { "id": 34, "type": "timeseries", "title": "Leader Elections & Unclean Elections",
+          "description": "Spikes in leader elections = broker restarts or network partitions. Any unclean election = data loss risk.",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 54 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [
+            { "expr": "sum(rate(kafka_controller_kafkacontroller_leaderelectionrateanddurationms_count{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"}[1m]))", "legendFormat": "Leader Elections/s", "refId": "A" },
+            { "expr": "sum(kafka_controller_kafkacontroller_uncleanleaderelectionspersec{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"})", "legendFormat": "Unclean Elections/s", "refId": "B" }
+          ],
+          "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
+          "fieldConfig": { "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 10 }, "min": 0 } } },
+
+        { "id": 35, "type": "row", "title": "Request Handling", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 62 }, "collapsed": false },
+
+        { "id": 36, "type": "timeseries", "title": "Request Handler Thread Idle %",
+          "description": "How idle the request handler I/O threads are. Drop below 30% = broker is CPU-saturated on request processing.",
+          "gridPos": { "h": 8, "w": 8, "x": 0, "y": 63 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "kafka_server_kafkarequesthandlerpool_requesthandleravgidlepercent{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"}", "legendFormat": "{{pod}}", "refId": "A" }],
           "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
           "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 1, "custom": { "lineWidth": 2, "fillOpacity": 10 },
-            "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "orange", "value": 0.3 }, { "color": "green", "value": 0.5 }] }
-          } }
-        },
+            "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "orange", "value": 0.2 }, { "color": "green", "value": 0.5 }] }
+          } } },
 
-        {
-          "id": 19,
-          "type": "row",
-          "title": "JVM",
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 40 },
-          "collapsed": false
-        },
-
-        {
-          "id": 20,
-          "type": "timeseries",
-          "title": "JVM Heap Used (by broker)",
-          "description": "JVM heap memory currently in use",
-          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 41 },
+        { "id": 37, "type": "timeseries", "title": "Produce Requests / sec",
+          "description": "Total produce request rate. Indicates producer write throughput in terms of API calls.",
+          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 63 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "targets": [
-            {
-              "expr": "jvm_memory_bytes_used{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",area=\"heap\"}",
-              "legendFormat": "{{pod}} used",
-              "refId": "A"
-            },
-            {
-              "expr": "jvm_memory_bytes_max{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",area=\"heap\"}",
-              "legendFormat": "{{pod}} max",
-              "refId": "B"
-            }
+            { "expr": "sum(rate(kafka_server_brokertopicmetrics_totalproducerequests_total{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",topic=~\"$kafka_topic\"}[1m])) by (topic)", "legendFormat": "{{topic}}", "refId": "A" }
           ],
           "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
-          "fieldConfig": { "defaults": { "unit": "bytes", "custom": { "lineWidth": 2, "fillOpacity": 10 } } }
-        },
+          "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "lineWidth": 2, "fillOpacity": 10 }, "min": 0 } } },
 
-        {
-          "id": 21,
-          "type": "timeseries",
-          "title": "GC Collection Time / sec",
-          "description": "Time spent in garbage collection per second (rate). High values indicate GC pressure.",
-          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 41 },
+        { "id": 38, "type": "timeseries", "title": "Fetch Requests / sec",
+          "description": "Total fetch request rate from consumers. Indicates consumer read throughput in terms of API calls.",
+          "gridPos": { "h": 8, "w": 8, "x": 16, "y": 63 },
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "targets": [{
-            "expr": "sum(rate(jvm_gc_collection_seconds_sum{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"}[1m])) by (pod, gc)",
-            "legendFormat": "{{pod}} — {{gc}}",
-            "refId": "A"
-          }],
+          "targets": [
+            { "expr": "sum(rate(kafka_server_brokertopicmetrics_totalfetchrequests_total{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",topic=~\"$kafka_topic\"}[1m])) by (topic)", "legendFormat": "{{topic}}", "refId": "A" }
+          ],
           "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
-          "fieldConfig": { "defaults": { "unit": "s", "custom": { "lineWidth": 2, "fillOpacity": 10 }, "min": 0 } }
-        }
+          "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "lineWidth": 2, "fillOpacity": 10 }, "min": 0 } } },
+
+        { "id": 39, "type": "row", "title": "Purgatory (Queue Depth)", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 71 }, "collapsed": false },
+
+        { "id": 40, "type": "timeseries", "title": "Produce Purgatory Size",
+          "description": "Pending produce requests waiting for acks (acks=all or acks=-1). High values = broker is slow to replicate or flush.",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 72 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "kafka_server_delayedoperationpurgatory_purgatorysize{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",delayedOperation=\"Produce\"}", "legendFormat": "{{pod}} produce purgatory", "refId": "A" }],
+          "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
+          "fieldConfig": { "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 15 }, "min": 0,
+            "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 100 }, { "color": "red", "value": 1000 }] }
+          } } },
+
+        { "id": 41, "type": "timeseries", "title": "Fetch Purgatory Size",
+          "description": "Pending fetch requests waiting for new messages (fetch.min.bytes not yet satisfied). Normal during low traffic.",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 72 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "kafka_server_delayedoperationpurgatory_purgatorysize{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",delayedOperation=\"Fetch\"}", "legendFormat": "{{pod}} fetch purgatory", "refId": "A" }],
+          "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
+          "fieldConfig": { "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 15 }, "min": 0 } } },
+
+        { "id": 42, "type": "row", "title": "Error & Rejection Rates", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 80 }, "collapsed": false },
+
+        { "id": 43, "type": "timeseries", "title": "Failed Produce Requests / sec (by topic)",
+          "description": "Producer errors per topic. Includes auth failures, quota violations, invalid records.",
+          "gridPos": { "h": 8, "w": 8, "x": 0, "y": 81 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "sum(rate(kafka_server_brokertopicmetrics_failedproducerequests_total{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",topic=~\"$kafka_topic\"}[1m])) by (topic)", "legendFormat": "{{topic}}", "refId": "A" }],
+          "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
+          "fieldConfig": { "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 10 }, "min": 0,
+            "color": { "mode": "fixed", "fixedColor": "red" }
+          } } },
+
+        { "id": 44, "type": "timeseries", "title": "Failed Fetch Requests / sec (by topic)",
+          "description": "Consumer fetch errors per topic. Includes auth failures and offset out of range.",
+          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 81 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "sum(rate(kafka_server_brokertopicmetrics_failedfetchrequests_total{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",topic=~\"$kafka_topic\"}[1m])) by (topic)", "legendFormat": "{{topic}}", "refId": "A" }],
+          "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
+          "fieldConfig": { "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 10 }, "min": 0,
+            "color": { "mode": "fixed", "fixedColor": "orange" }
+          } } },
+
+        { "id": 45, "type": "timeseries", "title": "Bytes Rejected / sec",
+          "description": "Bytes rejected by the broker — typically quota violations. Should be 0 in a healthy setup.",
+          "gridPos": { "h": 8, "w": 8, "x": 16, "y": 81 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "sum(rate(kafka_server_brokertopicmetrics_bytesrejected_total{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",topic=~\"$kafka_topic\"}[1m])) by (topic)", "legendFormat": "{{topic}}", "refId": "A" }],
+          "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
+          "fieldConfig": { "defaults": { "unit": "Bps", "custom": { "lineWidth": 2, "fillOpacity": 10 }, "min": 0 } } },
+
+        { "id": 19, "type": "row", "title": "JVM", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 89 }, "collapsed": false },
+
+        { "id": 20, "type": "timeseries", "title": "JVM Heap Used (by broker)",
+          "description": "JVM heap memory currently in use vs maximum allocated",
+          "gridPos": { "h": 8, "w": 8, "x": 0, "y": 90 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [
+            { "expr": "jvm_memory_bytes_used{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",area=\"heap\"}", "legendFormat": "{{pod}} used", "refId": "A" },
+            { "expr": "jvm_memory_bytes_max{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\",area=\"heap\"}", "legendFormat": "{{pod}} max", "refId": "B" }
+          ],
+          "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
+          "fieldConfig": { "defaults": { "unit": "bytes", "custom": { "lineWidth": 2, "fillOpacity": 10 } } } },
+
+        { "id": 21, "type": "timeseries", "title": "GC Collection Time / sec",
+          "description": "Time spent in garbage collection per second. High = GC pressure, will cause latency spikes.",
+          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 90 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "sum(rate(jvm_gc_collection_seconds_sum{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"}[1m])) by (pod, gc)", "legendFormat": "{{pod}} — {{gc}}", "refId": "A" }],
+          "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
+          "fieldConfig": { "defaults": { "unit": "s", "custom": { "lineWidth": 2, "fillOpacity": 10 }, "min": 0 } } },
+
+        { "id": 46, "type": "timeseries", "title": "JVM Thread Count",
+          "description": "Total live JVM threads in the broker. Sudden spikes or steady growth indicates a thread leak.",
+          "gridPos": { "h": 8, "w": 8, "x": 16, "y": 90 },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "targets": [{ "expr": "jvm_threads_current{namespace=~\"$kubernetes_namespace\",pod=~\"$kafka_broker\"}", "legendFormat": "{{pod}}", "refId": "A" }],
+          "options": { "tooltip": { "mode": "multi", "sort": "desc" }, "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" } },
+          "fieldConfig": { "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 10 }, "min": 0 } } }
 
       ]
     }
