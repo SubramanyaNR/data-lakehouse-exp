@@ -65,6 +65,7 @@ function request(base, method, path, body) {
       res.on("data", chunk => (data += chunk));
       res.on("end", () => {
         if (res.statusCode === 404) return resolve(null);
+        if (res.statusCode >= 400) return reject(new Error(`HTTP ${res.statusCode} from ${method} ${path}: ${data}`));
         try { resolve(JSON.parse(data)); } catch { resolve(null); }
       });
     });
