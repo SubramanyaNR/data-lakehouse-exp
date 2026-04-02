@@ -29,8 +29,8 @@ let consumerProc = null;
 
 function spawnService(script, port) {
   const proc = spawn(
-    "uvicorn",
-    [`${script}:app`, "--port", String(port), "--log-level", "warning"],
+    "python3",
+    ["-m", "uvicorn", `${script}:app`, "--port", String(port), "--log-level", "warning"],
     { cwd: KAFKA_DIR, env: { ...process.env }, stdio: ["ignore", "pipe", "pipe"] }
   );
   proc.stdout.on("data", d => process.stdout.write(`[${script}] ${d}`));
